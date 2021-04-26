@@ -3,7 +3,7 @@ import {
     View,
     StyleSheet,
     StatusBar,
-    Image,ScrollView,TextInput, Alert, Platform ,TouchableOpacity, LogBox
+    Image,ScrollView,TextInput, Alert, Platform ,TouchableOpacity, LogBox , Dimensions
 } from 'react-native';
 import {
     Avatar,
@@ -21,43 +21,61 @@ import axios from 'axios';
 import host from '../port/index';
 import { AsyncStorage } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';  
-import RNPickerSelect from 'react-native-picker-select'; 
-import * as ImagePicker from 'expo-image-picker';
-import Textarea from 'react-native-textarea';
-import { Feather } from '@expo/vector-icons'; 
-
+import { Entypo } from '@expo/vector-icons'; 
+import imgCar from '../images/imgCar.jpg';
 const myCar = ({navigation,route})=> {
-    const [getMyCars , setMyCar] = React.useState([])
-    // console.log(route.params.id);
+    
+    const [data ,setData] = React.useState([])
+   
 
-
-    const getMyCar = async () => {
-        const ids = route.params.id;
-        // console.log(ids);
-        await axios.post(`${host}/getmycar` , {ids})
-        .then((it)=>{
-            it.data.map((val)=>{
-            if(val.status == true){
-                setMyCar(pre=>[...pre , val])
-            }
-            })
+    const myOrder = async () => {
+        await axios.post(`${host}/myOrders`,{id: route.params.id}).then((res)=>{
+            setData(res.data)
+            
         })
-            
-            
-               
-            
-        
-           
-        
     }
 
    
-    // console.log(getMyCars);
+    
+    const confirm = (id,num) => {
+        // console.log(id,num);
+        const respone = {
+            idConfirm: id,
+            numConfirm : num
+        }
+        axios.post(`${host}/Confirm`,respone).then(dt=>{
+            Alert.alert(
+                "Duyệt xe thành công.",
+                "",
+                [
+                  { text: "OK", onPress: () => myOrder()}
+                ]
+              );
+            // Alert.alert("sadasd")
+        })
+    }
+
+    const unConfirm = (id,num) => {
+        // console.log(id,num);
+        const respone = {
+            idConfirm: id,
+            numConfirm : num
+        }
+        axios.post(`${host}/unConfirm`,respone).then(dt=>{
+            Alert.alert(
+                "Duyệt xe không thành công.",
+                "",
+                [
+                  { text: "OK", onPress: () => myOrder()}
+                ]
+              );
+        })
+    }
 
 
-
-
-    React.useEffect(()=>{getMyCar()},[])
+ 
+    // console.log(data);
+    React.useEffect(()=>{myOrder()},[])
 
 
 
@@ -75,67 +93,117 @@ const myCar = ({navigation,route})=> {
                     </TouchableOpacity>
 
                     <View style={{flex: 1 }}>
-                        <Text style={{color: '#fff', fontWeight:'bold',fontSize: 17, textAlign:'center' }}>XE CỦA TÔI</Text>    
+                        <Text style={{color: '#fff', fontWeight:'bold',fontSize: 17, textAlign:'center' }}>DUYỆT XE</Text>    
                     </View> 
                     
                     <TouchableOpacity>
-                        <Ionicons name="arrow-back" size={24} color="black" style={{opacity: 0}}/>
+                        <Ionicons name="notifications-outline" size={24} color="white"/>
                     </TouchableOpacity>
                 
             </View>
 
-            {
-                getMyCars.map((item,index)=>(
-            <TouchableOpacity 
-                key={index}
-                // onPress={()=>detailCar(item._id)}
-            >  
-
-                <View style={{justifyContent:'center', alignItems:'center',marginTop: 10}}>
-                <View style={{width:"90%", height:200}}>
-                <Image
-                    source={{uri: host + '/' + item.imagesCar}}
-                    style={{width:"100%", height: "100%"}}
-                />
-            </View>
-            <View style={{width:"90%", height:120, backgroundColor:"#ffffff",borderBottomEndRadius:5,borderBottomLeftRadius: 5,shadowColor: "#000",
-shadowOffset: {
-	width: 0,
-	height: 3,
-},
-shadowOpacity: 0.29,
-shadowRadius: 4.65,
-
-elevation: 7,}}>
-                <Text  style={{marginTop: 10,marginLeft: 10,fontSize: 15,fontWeight:'bold'}}>{item.carModel} {item.carName}</Text>
-                <View style={{flexDirection:'row'}}>
-                     <Text style={{marginTop: 5,marginLeft: 10}}>5.0 <Ionicons name="star-outline" style={{color:'green', fontSize: 14}}></Ionicons> </Text>
-                     <Text style={{marginTop: 7,marginLeft: 10,fontSize: 12}}>22 chuyến</Text>
-                     {/* <View style={{flexDirection:'row'}}>
-                        <Text style={{left:70,color:'#00a550',fontSize:18,fontWeight:'bold'}}>
-                        {Number(item.price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}
-                        </Text>
-                        <Text style={{left:70,fontSize:12,marginTop:5}}>/ngày</Text>
-                    </View> */}
-                    
-                </View>
-                <View style={{flexDirection:'row',marginTop:7}}>
-                     <Text style={{paddingTop: 2,marginLeft: 10, fontSize: 11,backgroundColor:'#e4e6e8', width: 80 , textAlign:'center',borderRadius:5,height:20}}>{item.transmission}</Text>
-                     <Text style={{paddingTop: 2,marginLeft: 10, fontSize: 11,backgroundColor:'#e4e6e8', width: 80 , textAlign:'center',borderRadius:5,height:20}}>{item.fuel}</Text>
-                </View>
-                <View style={{flexDirection:'row'}}>
-                    <Text style={{marginTop: 10,marginLeft: 10}}><Ionicons name="location-outline" style={{ fontSize: 14}}></Ionicons></Text>
-                    <Text style={{marginTop: 9,marginLeft: 5, fontSize:12}}>{item.ward} , {item.district} , {item.address}</Text>
-                </View>
-                
-            </View>
-
-                </View> 
-                <View style={{marginTop:10}}></View>
-           </TouchableOpacity>     
            
-                ))
-            }
+
+            
+               {
+                   data.length ? <View style={{justifyContent:'center', alignItems:'center'}}>
+                         {
+                    Object.entries(data).length !== 0 && data.map((it,index)=>(
+                        
+                        <View key={index}>
+                                <View style={{justifyContent:'center', alignItems:'center',marginTop: 10}}>
+               
+               <View style={{width:"90%", height:300, backgroundColor:"#ffffff",borderTopLeftRadius:5,borderTopRightRadius:5,borderBottomEndRadius:5,borderBottomLeftRadius: 5,shadowColor: "#000",
+   shadowOffset: {
+       width: 0,
+       height: 3,
+   },
+   shadowOpacity: 0.29,
+   shadowRadius: 4.65,
+   
+   elevation: 7,}}>
+                    <View style={{justifyContent:'center', alignContent:'center'}}>
+                        <Text style={{textAlign:'center', marginTop:10,fontSize:16,fontWeight:'bold'}}>
+                         {it.idCar.address}
+                        </Text>
+                    </View>
+                    <View style={{flexDirection:'row',marginTop:10 , justifyContent:'center',alignItems:'center'}}>
+                        {/* <Text style={{fontSize:15,fontWeight:'bold'}}>Ngày</Text> */}
+                        <Text style={{fontSize:18}}>{it.dateStart}</Text>
+                        <Entypo name="arrow-long-right" size={30} color="#00a550" style={{marginHorizontal:20}} />
+                        <Text style={{fontSize:18}}>{it.dateEnd}</Text>
+                    </View>
+                    <View style={{marginTop:10,justifyContent:'center',alignContent:'center'}}>
+                        <Text style={{fontSize:15,fontWeight:'bold',textAlign:'center',alignContent:'center',justifyContent:'center'}}>Thông tin người đặt</Text>
+                    </View>
+                    <View style={{flexDirection:'row',marginTop:10}}>
+                        <Text style={{fontWeight:'bold', marginLeft:10,width:80}}>Tên</Text>
+                        <Text>{it.idUserCheckOut.name}</Text>
+                    </View>
+                    <View style={{flexDirection:'row',marginTop:5}}>
+                        <Text style={{fontWeight:'bold', marginLeft:10,width:80}}>Liên lạc</Text>
+                        <Text>{it.idUserCheckOut.phone}</Text>
+                    </View>
+                    <View style={{flexDirection:'row',marginTop:5}}>
+                        <Text style={{fontWeight:'bold', marginLeft:10,width:80}}>Địa chỉ</Text>
+                        <Text>Quận 12</Text>
+                    </View>
+                    <View style={{flexDirection:'row',marginTop:5}}>
+                        <Text style={{fontWeight:'bold', marginLeft:10,width:80}}>Giá thuê</Text>
+                        <Text>{Number(it.price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ /1 ngày</Text>
+                    </View>
+                    <View style={{flexDirection:'row',marginTop:5}}>
+                        <Text style={{fontWeight:'bold', marginLeft:10,width:80}}>Tổng cộng</Text>
+                        <Text style={{fontWeight:'bold'}}>{(Number(it.price) * Number(it.dateNumber)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
+                    </View>
+                    <View style={{flexDirection:'row',marginTop:5}}>
+                        <Text style={{fontWeight:'bold', marginLeft:10,width:80}}>Trạng thái</Text>
+                            
+                            {it.status == 0 ?  <Text style={{color:'red'}}>Chưa xác nhận</Text> : <Text style={{color:'#00a550'}}>Đã xác nhận</Text> } 
+                        </View>
+ 
+                        {
+                            it.status == 1 ? <View></View> :<View style={{justifyContent:'center',alignItems:'center',flexDirection:'row',left:100}} >
+                           
+                           
+                           
+                            <TouchableOpacity style={{borderWidth:1,width:40,borderRadius:5,marginTop:5,borderColor:'#00a550'}} onPress={()=>confirm(it._id,1)}>
+                                <Ionicons name="checkmark-outline" size={20} color="#00a550" style={{textAlign:'center'}}/>
+                                
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{borderWidth:1,width:40,borderRadius:5,marginTop:5,marginLeft:5,borderColor:'red'}} onPress={()=>unConfirm(it._id,0)}>
+                                <Ionicons name="close-outline" size={20} color="red" style={{textAlign:'center'}}/>
+                                
+                            </TouchableOpacity>
+                        </View>
+                        }
+                         
+
+
+                        </View>
+                    </View>
+                   </View> 
+                    ))
+                }
+        
+                   </View>
+                   : 
+                   <View style={{backgroundColor:'white' ,height: Dimensions.get("screen").height }}> 
+                   <View style={{justifyContent:'center',alignItems:'center',marginTop:100}}>
+                           <Text style={{fontSize:12,color:"#73777b"}}>Hiện tại bạn chưa có yêu cầu duyệt xe.</Text>
+                   </View>
+                   <View style={{justifyContent:'center',alignItems:'center',marginTop:20,backgroundColor:'#fff'}}>
+                       
+                       <Image  style={{width:"100%" , height:250}} source={imgCar}/>
+                           
+                       </View>
+                </View>
+               }
+                
+              
+                
+                <View style={{marginTop:10}}></View>
+         
             
         
       </ScrollView>

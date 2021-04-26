@@ -21,6 +21,11 @@ import DrawerCustom from './screens/drawer'
 import myCar from './screens/mycar';
 import favorites from './screens/favorite'
 import map from './screens/map'
+import calendarScreen from './screens/calendarSave';
+import myTrip from './screens/mytrip';
+import historyPage from './screens/history';
+import rate from './screens/rate';
+
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -64,6 +69,10 @@ export default function App() {
           <Stack.Screen name="myCar" component={myCar} />
           <Stack.Screen name="favorite" component={favorites} />
           <Stack.Screen name="map" component={map} />
+          <Stack.Screen name="calendarSave" component={calendarScreen} />
+          <Stack.Screen name="myTrip" component={myTrip} />
+          <Stack.Screen name="history" component={historyPage} />
+          <Stack.Screen name="rate" component={rate} />
         </Stack.Navigator>
         
       </NavigationContainer>

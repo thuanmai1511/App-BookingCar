@@ -15,7 +15,7 @@ import {
     Switch
 
 } from 'react-native-paper';
-
+import * as Location from 'expo-location';
 import { AntDesign } from '@expo/vector-icons'; 
 import axios from 'axios';
 import host from '../port/index';
@@ -42,7 +42,8 @@ const formCar2 = ({navigation,route}) => {
     const [getProvince , setProvince] = React.useState('')
     const [getWard , setWard] = React.useState('')
   
-
+    const [location, setLocation] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
 
     const getAddress = async ()=> {
         const isCity = [];
@@ -119,11 +120,12 @@ const formCar2 = ({navigation,route}) => {
             fueledAPI : fueled,
             address: getCity,
             district : getProvince,
-            ward: getWard
+            ward: getWard,
+            location: location
 
         }
         
-        if( respone2.noteAPI == '' || respone2.fueledAPI == '' || respone2.address == '' || respone2.district == '' ||respone2.ward == '' ){
+        if( respone2.noteAPI == '' || respone2.fueledAPI == '' || respone2.address == '' || respone2.district == '' ||respone2.ward == ''|| !respone2.location ){
             Alert.alert("Hãy nhập đầy đủ thông tin")
         }else {
             navigation.navigate("formCar3", {
@@ -135,7 +137,15 @@ const formCar2 = ({navigation,route}) => {
     }
 
     React.useEffect(()=>{
-        getAddress() 
+        (async () => {
+             getAddress() 
+
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+              setErrorMsg('Permission to access location was denied');
+              return;
+            }
+          })();
     },[])
     // console.log(listCity);
     return(
@@ -219,10 +229,24 @@ const formCar2 = ({navigation,route}) => {
             
                 
                 </View>
-                
+                {/* <Text>ádsad</Text>                 */}
                    
                     <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
                         <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 10, borderColor: '#e8eaef'}}></View>
+                    </View>
+                    <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
+                    <TouchableOpacity onPress={async()=>{
+                        if(!location){
+                            let location = await Location.getCurrentPositionAsync({});
+                                // console.log(location);
+                            setLocation(location);
+                        }
+                    }} >
+                            <Text style={{  borderWidth: 1, height: 25 ,textAlign:'center', fontSize:12, paddingTop: 3}}>
+                                {location?"lat: "+location?.coords.latitude+"- long: "+location?.coords.longitude:"Get Location"}
+                               
+                            </Text>
+                        </TouchableOpacity>
                     </View>
             </View>
 

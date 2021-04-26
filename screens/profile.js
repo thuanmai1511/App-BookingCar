@@ -222,7 +222,7 @@ const Profile = ({navigation}) => {
             let result = await ImagePicker.launchImageLibraryAsync({
               mediaTypes: ImagePicker.MediaTypeOptions.All,
               allowsEditing: true,
-              aspect: [4, 4],
+             
               quality: 1,
             });
         
@@ -259,7 +259,7 @@ const Profile = ({navigation}) => {
             let result = await ImagePicker.launchImageLibraryAsync({
               mediaTypes: ImagePicker.MediaTypeOptions.All,
               allowsEditing: true,
-              aspect: [4, 4],
+              
               quality: 1,
             });
         
@@ -300,6 +300,7 @@ const Profile = ({navigation}) => {
                         onPress={ () => setModalImage(false)}
                         >
                         <Icon name="chevron-left"  size={20} color="black" style={{marginTop:15, marginLeft :15}}/>
+                        
                     </TouchableOpacity>
                 </View>
                

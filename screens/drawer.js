@@ -25,12 +25,15 @@ import { Alert } from 'react-native';
 import host from '../port/index';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons'; 
+import { FontAwesome } from '@expo/vector-icons'; 
+import { MaterialIcons } from '@expo/vector-icons'; 
+import { Feather } from '@expo/vector-icons'; 
 
 export default function DrawerContent({...props}) {
     const navigation = useNavigation();
     const [user, setUser] = React.useState(null)
     const [dataProfile , setDataProfile] = React.useState('');
-    
+    const [auth , setUserAuth] = React.useState('');
     const retrieveEmail = async () => {
         try {
           const value = await AsyncStorage.getItem('email');
@@ -56,9 +59,6 @@ export default function DrawerContent({...props}) {
     }
    
     retrieveEmail()
-    React.useEffect(() => {
-        getDataProfile()
-    } ,[])
     
     const getDataProfile = async () => {
       const value = await AsyncStorage.getItem('id');
@@ -70,6 +70,22 @@ export default function DrawerContent({...props}) {
           // console.log(res.data[0]);
       })
     }
+    
+    const userAuth  = async () => {
+        const value = await AsyncStorage.getItem('id');
+        await axios.post(`${host}/userAuthen`, {id :value})
+        .then((res)=>{
+            setUserAuth(res.data)
+        })
+    } 
+
+
+    // console.log(auth);
+
+    React.useEffect(() => {
+        getDataProfile() , userAuth()
+    } ,[])
+    
     return (
         <View  style= {{flex: 1}}>
            <DrawerContentScrollView >
@@ -116,29 +132,33 @@ export default function DrawerContent({...props}) {
                        
                         <DrawerItem
                             icon={({color, size})=> (
-                                <Icon
-                                    name="home-outline"
-                                    color={color}
-                                    size={size}
-                                />
+                                // <Icon
+                                //     name="home-outline"
+                                //     color={color}
+                                //     size={size}
+                                // />
+                                <Ionicons name="md-home" size={24} color="grey" />
                                 
                             )}
                             label="Trang Chủ"
+                            
+                            
                             onPress= {()=> navigation.navigate("Home")}
                         />
                          <DrawerItem
                             icon={({color, size})=> (
-                                <Icon
-                                    name="account-outline"
-                                    color={color}
-                                    size={size}
-                                />
+                                // <Icon
+                                //     name="account-outline"
+                                //     color={color}
+                                //     size={size}
+                                // />
+                                <FontAwesome name="user-circle" size={24} color="grey" />
                                 
                             )}
                             label="Tài khoản"
                             onPress= {async ()=> {
                                 const value = await retrieveEmail()
-                                console.log(value);
+                                // console.log(value);
                                 if(value) {
                                     
                                     navigation.navigate("Profile")
@@ -150,12 +170,8 @@ export default function DrawerContent({...props}) {
                         />
                         <DrawerItem
                             icon={({color, size})=> (
-                                // <Icon
-                                //     name="car-cog"
-                                //     color={color}
-                                //     size={size}
-                                // />
-                                <Ionicons name="add-circle-outline" size={25} color="black" />
+                               
+                                <MaterialIcons name="post-add" size={25} color="grey" />
                                 
                             )}
                             label="Đăng xe"
@@ -169,21 +185,43 @@ export default function DrawerContent({...props}) {
                                 }
                             }}
                             />
-                            <DrawerItem
-                            icon={({color, size})=> (
-                                <Icon
-                                    name="car-key"
-                                    color={color}
-                                    size={size}
+                            {
+                                auth ?
+                                auth == null
+                                ? <></>
+
+                                : 
+                                <DrawerItem
+                                    icon={({color, size})=> (
+                                    
+                                        <Feather name="user-check" size={24} color="grey" />
+                                        
+                                    )}
+                                    label="Duyệt xe"
+                                    onPress= { async()=> {
+                                        const value = await AsyncStorage.getItem('id');
+                                        // console.log(value);
+                                        if(value) {
+                                            navigation.navigate("myCar",{id: value})
+                                        } else {
+                                            navigation.navigate("SigninScreen")
+                                        }
+                                    }}
                                 />
+                                : null
+                            }
+                            
+                             <DrawerItem
+                            icon={({color, size})=> (
+                                <FontAwesome name="car" size={20} color="grey" />
                                 
                             )}
-                            label="Xe của tôi"
+                            label="Chuyến của tôi"
                             onPress= { async()=> {
                                 const value = await AsyncStorage.getItem('id');
                                 // console.log(value);
                                 if(value) {
-                                    navigation.navigate("myCar",{id: value})
+                                    navigation.navigate("myTrip",{id: value})
                                 } else {
                                     navigation.navigate("SigninScreen")
                                 }
@@ -191,7 +229,7 @@ export default function DrawerContent({...props}) {
                             />
                             <DrawerItem
                             icon={({color, size})=> (
-                                <Ionicons name="heart-outline" size={25} color="black" />
+                                <Ionicons name="heart" size={25} color="grey" />
                                 
                             )}
                             label="Xe yêu thích"
@@ -205,6 +243,7 @@ export default function DrawerContent({...props}) {
                                 }
                             }}
                             />
+                           
                            
                     </Drawer.Section>
                </View>

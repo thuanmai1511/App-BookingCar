@@ -87,7 +87,7 @@ const SigninScreen = ({navigation}) =>{
                 storeEmail(res.data.email);
                 Alert.alert("Đăng nhập thành công")
                 navigation.navigate("Home")
-            }else {
+                  }else {
                 Alert.alert("Sai tài khoản hoặc mật khẩu")
             }
             

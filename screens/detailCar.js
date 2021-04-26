@@ -36,18 +36,25 @@ const detailCar = ({navigation,route})=> {
     const [name , setName] = React.useState('')
     const [email , setEmail] = React.useState('')
     const [img , setImg] = React.useState('')
+    const [dataReview, setDataReview] = React.useState([])
+   
 
+    // console.log(route.params.e);
+    // console.log(route.params.s);
+    // console.log(route.params.n);
     const detailCars = async () => {
         
         const idCar = route.params.ids;
         // console.log(idCar);
 
         const detailMap = await axios.get(`${host}/detailCar/`+idCar)
-        
-            setDataDetailCar(detailMap.data)
+        setDataDetailCar(detailMap.data)
+        getDataReview(detailMap.data[0].idUser)
             // setDataDetailCar(previous=>[...previous, val])
                 //    console.log(dataDetailCar);
     }
+    // console.log(dataDetailCar);
+
     const addFavorite = async (id) => {
         const value = await AsyncStorage.getItem('id');
         const idCar = id;
@@ -76,15 +83,66 @@ const detailCar = ({navigation,route})=> {
             setImg(res.data.img)
         })
     }
-  
+    
+
+    const checkOut = async () => {
+        const value = await AsyncStorage.getItem('id');
+        // console.log(value);
+        if(!value) {
+            Alert.alert("Vui lòng đăng nhập để tiếp tục")
+            navigation.navigate("SigninScreen")
+        }else {
+           
+            const  p = dataDetailCar.map((k)=>(
+                route.params.data ? (Number(k.price) + Number(servicePrice) - Number(route.params.data))
+                : (Number(k.price) + Number(servicePrice))
+    
+            ))
+            const i = dataDetailCar.map((id)=>(id.idUser))
+            // console.log(p);
+            const respone = {
+                dateStart : route.params.s, 
+                dateEnd : route.params.e,
+                DateNumber : route.params.n,
+                idCar : route.params.ids,
+                idUser: value,
+                idH : i,
+                price : p,
+                resp : 0
+    
+            }
+            // console.log(respone);
+            if(respone.dateStart == undefined || respone.dateEnd == undefined ){
+                Alert.alert("Vui lòng chọn ngày thuê")
+            }else {
+                await axios.post(`${host}/checkout`,respone).then(()=>{
+                    Alert.alert("Đặt xe thành công. Vui lòng đợi chủ xe phản hồi")
+                })
+            }
+          
+        }
+       
+    }
+    const getDataReview =  async (id) => {
+        // console.log(id);
+        await axios.post(`${host}/reviewAPI`, {id})
+        .then(dt=>{
+            setDataReview(dt.data)
+            // console.log(dt.data);
+            
+        })
+    } 
+    // console.log(dataReview);
     React.useEffect(  ()=>{
-        detailCars() , selectedHeart() , getName()
+        detailCars() , selectedHeart() , getName() 
     },[])
 
     // console.log(dataDetailCar);
     
 
     const servicePrice = Number(200000)
+
+   
     
     return(
         
@@ -132,6 +190,7 @@ const detailCar = ({navigation,route})=> {
                             
                             />
                         </View>
+                        
                         ))
                         
                         
@@ -150,7 +209,7 @@ const detailCar = ({navigation,route})=> {
                      <View style={{flexDirection:'row'}}>
                      
                         {dataDetailCar.map((i)=>(
-                            <Text key={Math.random()} style={{left:100,color:'#00a550',fontSize:18,fontWeight:'bold'}}>{Number(i.price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</Text>
+                            <Text key={Math.random()} style={{left:100,color:'#00a550',fontSize:18,fontWeight:'bold'}}>{Number(i.price).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</Text>
                         ))}
                         
               
@@ -196,12 +255,15 @@ const detailCar = ({navigation,route})=> {
               <View style={{flexDirection:'row'}}>
                 
                 <Ionicons name="calendar-outline" size={20} color="black"  style={{justifyContent:'center',alignContent:'center', marginVertical:10,paddingHorizontal:10}}/>
-                <View style={{flexDirection:'column', justifyContent:'center',alignContent:'center'}}>
-                    <Text style={{fontSize:12}}>21h:00 CN, 04/04/2021</Text>
+                <View style={{flexDirection:'column', justifyContent:'center',alignContent:'center' ,marginLeft:10}}>
+                    <Text style={{fontSize:12, width:80}}>{route.params.s ? route.params.s : 'Ngày bắt đầu'}</Text>
                     
-                    <Text style={{fontSize:12,marginVertical:2}}>20h:00 T2, 05/04/2021</Text>
+                    <Text style={{fontSize:12,marginVertical:2, width:80}}>{route.params.e ? route.params.e : 'Ngày kết thúc'}</Text>
                 </View>
-                <Text style={{left:130,fontSize:12,color:'green',justifyContent:'center', alignContent:'center',top:20}}>Thay đổi</Text>
+                <TouchableOpacity style={{width:50,height:25,backgroundColor:'white',marginTop:10,borderColor:'#00a550',borderWidth:1,left:160}} onPress={()=>navigation.navigate("calendarSave")}>
+                            <Text style={{textAlign:'center',color:'#00a550',paddingTop:5,fontSize:10,fontWeight:'bold'}}>THAY ĐỔI</Text>   
+                        </TouchableOpacity> 
+       
               </View>
 
               <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
@@ -232,9 +294,14 @@ const detailCar = ({navigation,route})=> {
                         <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 5, borderColor: '#e8eaef'}}></View>
             </View>
             <View style={{paddingHorizontal:20}}> 
-                <TouchableOpacity onPress={()=>navigation.navigate("map")}>
-                    <Text style={{fontSize:10, color:"#00a550", fontWeight:'bold'}}>Chọn địa điểm giao nhận xe</Text>
-                </TouchableOpacity>
+            {
+                dataDetailCar.map((p)=>(
+                    <TouchableOpacity key={Math.random()}onPress={()=>navigation.navigate("map", {id :p._id })}>
+                        <Text style={{fontSize:10, color:"#00a550", fontWeight:'bold'}}>Chọn địa điểm giao nhận xe</Text>
+                     </TouchableOpacity>
+                ))
+            }
+                
             </View>
             <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
                         <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
@@ -417,7 +484,8 @@ const detailCar = ({navigation,route})=> {
                         }  */}
                         <View style={{flexDirection:'row'}}>
                             <Text style={{paddingTop:5, fontSize:18, marginLeft:10}}>5.0  </Text>    
-                            <Ionicons size={20} color="#00a550" name="star-outline" style={{paddingTop:5}}></Ionicons>
+                            {/* <Ionicons size={20} color="#00a550" name="star-outline" style={{paddingTop:5}}></Ionicons> */}
+                            <FontAwesome name="star" size={20} color="#00a550" style={{paddingTop:7}}/>
                         </View>
                        
                     </View>
@@ -439,10 +507,113 @@ const detailCar = ({navigation,route})=> {
                 </View>
                
           </View>
-          <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
-                        <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
-            </View>
+          
+
+            <View style={{marginTop:5,height:120,width:"100%", backgroundColor:'white'}}>
+              
+                <View style={{flexDirection:'row',paddingHorizontal:10,justifyContent:'center', alignItems:'center'}}>
+                    <View style={{flexDirection:'column' }}>
+                       <TouchableOpacity style={{width:300,height:35,backgroundColor:'#00a550',marginTop:15}} onPress={checkOut}>
+                            <Text style={{textAlign:'center',color:'white', paddingTop:8,fontSize:14,fontWeight:'bold'}}>ĐẶT XE</Text>   
+                        </TouchableOpacity>                       
+                        <TouchableOpacity style={{width:300,height:35,backgroundColor:'white',marginTop:10,borderColor:'#00a550',borderWidth:1}}>
+                            <Text style={{textAlign:'center',color:'#00a550', paddingTop:8,fontSize:14,fontWeight:'bold'}}>BÁO XẤU</Text>   
+                        </TouchableOpacity>  
+                    </View>
+                        
                     
+                </View>
+               
+          </View>
+          <View style={{marginTop:5,height:300,width:"100%", backgroundColor:'white'}}>
+              <View style={{flexDirection:'row'}}>
+                <Text style={{fontSize:12,fontWeight:'bold', marginVertical:10,paddingHorizontal:10}}>ĐÁNH GIÁ </Text>
+                 <Text style={{fontSize:12, left: 200,paddingHorizontal:10, marginVertical:10}}>{dataReview.length} nhận xét</Text>
+              </View>
+            
+            
+            {
+                dataReview.map((dt,index)=>(
+                    <View key={index}>
+                        <View style={{flexDirection:'row',paddingHorizontal:10}}>
+                        <View style={{flexDirection:'row'}}>
+                            <Text style={{fontSize:12, left: 270}}>{dataReview.date}</Text>
+                    
+                        </View>
+                            
+                        
+                    </View>
+                    
+                    <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
+                                <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
+                        </View>
+                        <View style={{flexDirection:'row'}}>
+                                <View style={{paddingHorizontal: 10}}>
+                                    
+                                    <Avatar.Image
+                                    source={{uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2vO2n-_DpXS1ZSm8d4Tn743V5FTuU2tYhEw&usqp=CAU"}}
+                                    size={50}
+                                    />
+                                    
+                                
+                                </View>
+                                <View style={{flexDirection:'column'}}>
+                                    <View style={{flexDirection:'row'}}>
+                                        <Text style={{fontSize: 14 , fontWeight:'bold', paddingHorizontal: 5}}>Mai Khánh Thuận</Text>
+                                        <Text style={{fontSize:12 , left:90}}>{dt.date}</Text>
+                                    </View>
+                                    
+                                  
+                                        {
+                                            dt.rating == 1 ?<FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7}}/> : <View></View>
+                                        }
+                                        {
+                                            dt.rating == 2 ? <View style={{flexDirection:'row',marginLeft:5}}>
+                                               < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7}}/>
+                                              < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
+                                                </View> : <View></View>
+                                        }
+                                        
+                                        {
+                                             dt.rating == 3 ? <View style={{flexDirection:'row',marginLeft:5}}>
+                                             < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7}}/>
+                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
+                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
+                                              </View> : <View></View>
+                                        }
+                                         {
+                                             dt.rating == 4 ? <View style={{flexDirection:'row',marginLeft:5}}>
+                                             < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7}}/>
+                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
+                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
+                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
+                                              </View> : <View></View>
+                                        }
+                                         {
+                                             dt.rating == 5 ? <View style={{flexDirection:'row',marginLeft:5}}>
+                                             < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7}}/>
+                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
+                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
+                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
+                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
+                                              </View> : <View></View>
+                                        }
+                                   
+                                    <View style={{paddingHorizontal: 5, marginTop: 20 , width:"70%"}}>
+                                        {/* <Text style={{fontSize:12, textAlign:'justify'}}>{dt.comment}</Text> */}
+                                    </View>
+                                </View>
+                                
+                        </View>
+                    </View>
+                ))
+            }
+              
+                <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
+                    <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
+                </View>
+             
+        </View>
       </ScrollView> 
 </View>
     )

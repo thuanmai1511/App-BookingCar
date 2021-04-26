@@ -45,7 +45,15 @@ const [city, setcity] = useState([
     {image: {uri: "https://c1.wallpaperflare.com/preview/843/155/800/da-nang-vietnam-danang-vietnamese.jpg"}, title: 'Đà Nẵng'
     },
 ]);
-
+    const [values , setValue] = React.useState('')
+    
+    const findId =  async () => {
+        const value = await AsyncStorage.getItem('id');
+        setValue(value)
+        // window.location.reload(true);
+    }
+    React.useEffect(()=>{findId()},[])
+    // console.log(values);
   return (
     
     <View style={styles.container}>
@@ -65,22 +73,26 @@ const [city, setcity] = useState([
                    
                     <Button onPress={() => navigation.openDrawer()}type="clear" icon={<Icon name="bars"  size={25} color="white"/>}  /> 
                     
-                
+              
                 </View>
-                <View style= {styles.btnLogin}>
+                                  
+                {
+                   values == null ? <View style= {styles.btnLogin}>
                 
-                    <Button onPress={() => navigation.navigate('SigninScreen')} type="clear" icon={<Icon name="user"  size={30} color="white"/>}  /> 
+                <Button onPress={() => navigation.navigate('SigninScreen')} type="clear" icon={<Icon name="user"  size={30} color="white"/>}  /> 
+            
+            </View> : <View style={styles.btnLogin}><Text style={{fontWeight:'bold', marginTop:10,color:'white',marginRight:10,fontSize:16}}>Xin Chào</Text></View>
+                }
                 
-                </View>
             
             
-            <View>
+            {/* <View>
                 <TextInput
                 style={styles.searchBox}
                 placeholder=' Tìm kiếm...'
                 placeholderTextColor="#666"></TextInput>
                 <Feather name= 'search' size={20} color='#666' style={{position: 'absolute', top: 170, right: 25, opacity: 0.6}}/>
-            </View>
+            </View> */}
             
         {/* </ImageBackground> */}
         

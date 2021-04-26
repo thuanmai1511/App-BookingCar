@@ -3,7 +3,7 @@ import {
     View,
     StyleSheet,
     StatusBar,
-    Image,ScrollView,TextInput, Alert, Platform ,TouchableOpacity, LogBox
+    Image,ScrollView,TextInput, Alert, Platform ,TouchableOpacity, LogBox ,Dimensions
 } from 'react-native';
 import {
     Avatar,
@@ -25,7 +25,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import * as ImagePicker from 'expo-image-picker';
 import Textarea from 'react-native-textarea';
 import { Feather } from '@expo/vector-icons'; 
-
+import imgCar from '../images/imgCar.jpg';
 const favorites = ({navigation,route})=> {
 
     const [data , setData]  = React.useState([])
@@ -55,9 +55,9 @@ const favorites = ({navigation,route})=> {
     
     return(
         
-        <View style={{ flex: 1 , backgroundColor: '#d6d9dc'}}>
+        <View style={{flex: 1 }}>
         <StatusBar  backgroundColor="black" barStyle="light-content"/>
-        <ScrollView>
+        <ScrollView style={{height: "100%",backgroundColor: '#d6d9dc'}}>
         <View style={{ flexDirection: 'row', backgroundColor:'black', alignItems:"center", marginTop: 30, padding: 20}}>
                 <TouchableOpacity
                    onPress={ () => navigation.goBack()}
@@ -75,8 +75,11 @@ const favorites = ({navigation,route})=> {
                 </TouchableOpacity>
             
          </View>
-    
-        {
+         {
+             data.length ? 
+             <View>
+
+{
             data.map((item,index)=>(
                 <View key={index}>
                      <TouchableOpacity 
@@ -128,6 +131,21 @@ elevation: 7,}}>
             }
             
 
+             </View>
+             :
+         <View style={{backgroundColor:'white' ,height: Dimensions.get("screen").height }}> 
+            <View style={{justifyContent:'center',alignItems:'center',marginTop:100}}>
+                    <Text style={{fontSize:12,color:"#73777b"}}>Hiện tại bạn chưa có xe yêu thích.</Text>
+                </View>
+            <View style={{justifyContent:'center',alignItems:'center',marginTop:20,backgroundColor:'#fff'}}>
+                
+                <Image  style={{width:"100%" , height:250}} source={imgCar}/>
+                    
+                </View>
+         </View>
+         }
+    
+       
         
           
 
