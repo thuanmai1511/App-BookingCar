@@ -74,7 +74,7 @@ const myCar = ({navigation,route})=> {
 
 
  
-    // console.log(data);
+    console.log(data);
     React.useEffect(()=>{myOrder()},[])
 
 
@@ -110,10 +110,10 @@ const myCar = ({navigation,route})=> {
                          {
                     Object.entries(data).length !== 0 && data.map((it,index)=>(
                         
-                        <View key={index}>
+                        <View key={index} style={{width:'90%'}}>
                                 <View style={{justifyContent:'center', alignItems:'center',marginTop: 10}}>
                
-               <View style={{width:"90%", height:300, backgroundColor:"#ffffff",borderTopLeftRadius:5,borderTopRightRadius:5,borderBottomEndRadius:5,borderBottomLeftRadius: 5,shadowColor: "#000",
+               <View style={{borderColor:'#e8eaef',borderWidth:1,width:"100%", height:300, backgroundColor:"#ffffff",borderTopLeftRadius:5,borderTopRightRadius:5,borderBottomEndRadius:5,borderBottomLeftRadius: 5,shadowColor: "#000",
    shadowOffset: {
        width: 0,
        height: 3,
@@ -129,9 +129,9 @@ const myCar = ({navigation,route})=> {
                     </View>
                     <View style={{flexDirection:'row',marginTop:10 , justifyContent:'center',alignItems:'center'}}>
                         {/* <Text style={{fontSize:15,fontWeight:'bold'}}>Ngày</Text> */}
-                        <Text style={{fontSize:18}}>{it.dateStart}</Text>
+                        <Text style={{fontSize:19}}>{it.dateStart}</Text>
                         <Entypo name="arrow-long-right" size={30} color="#00a550" style={{marginHorizontal:20}} />
-                        <Text style={{fontSize:18}}>{it.dateEnd}</Text>
+                        <Text style={{fontSize:19}}>{it.dateEnd}</Text>
                     </View>
                     <View style={{marginTop:10,justifyContent:'center',alignContent:'center'}}>
                         <Text style={{fontSize:15,fontWeight:'bold',textAlign:'center',alignContent:'center',justifyContent:'center'}}>Thông tin người đặt</Text>
@@ -146,15 +146,15 @@ const myCar = ({navigation,route})=> {
                     </View>
                     <View style={{flexDirection:'row',marginTop:5}}>
                         <Text style={{fontWeight:'bold', marginLeft:10,width:80}}>Địa chỉ</Text>
-                        <Text>Quận 12</Text>
+                        <Text></Text>
                     </View>
                     <View style={{flexDirection:'row',marginTop:5}}>
                         <Text style={{fontWeight:'bold', marginLeft:10,width:80}}>Giá thuê</Text>
-                        <Text>{Number(it.price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ /1 ngày</Text>
+                        <Text>{Number(it.idCar.price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ /{it.dateNumber} ngày</Text>
                     </View>
                     <View style={{flexDirection:'row',marginTop:5}}>
                         <Text style={{fontWeight:'bold', marginLeft:10,width:80}}>Tổng cộng</Text>
-                        <Text style={{fontWeight:'bold'}}>{(Number(it.price) * Number(it.dateNumber)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
+                        <Text style={{fontWeight:'bold'}}>{(Number(it.price)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
                     </View>
                     <View style={{flexDirection:'row',marginTop:5}}>
                         <Text style={{fontWeight:'bold', marginLeft:10,width:80}}>Trạng thái</Text>

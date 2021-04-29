@@ -140,7 +140,7 @@ const formCar2 = ({navigation,route}) => {
         (async () => {
              getAddress() 
 
-            let { status } = await Location.requestForegroundPermissionsAsync();
+            let { status } = await Location.requestPermissionsAsync();
             if (status !== 'granted') {
               setErrorMsg('Permission to access location was denied');
               return;
@@ -234,20 +234,26 @@ const formCar2 = ({navigation,route}) => {
                     <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
                         <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 10, borderColor: '#e8eaef'}}></View>
                     </View>
-                    <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
-                    <TouchableOpacity onPress={async()=>{
+                    <View style={{flexDirection:'row'}}>
+                        <Text style={{fontSize: 12, marginLeft: 20,fontWeight:'bold',width: 80}}>Lấy vị trí</Text>
+
+                        <TouchableOpacity style={{borderWidth: 1, height: 25,width:240 ,borderColor:'#e8eaef'}}onPress={async()=>{
                         if(!location){
                             let location = await Location.getCurrentPositionAsync({});
                                 // console.log(location);
                             setLocation(location);
                         }
                     }} >
-                            <Text style={{  borderWidth: 1, height: 25 ,textAlign:'center', fontSize:12, paddingTop: 3}}>
-                                {location?"lat: "+location?.coords.latitude+"- long: "+location?.coords.longitude:"Get Location"}
-                               
+                            <Text style={{  textAlign:'center', fontSize:12, paddingTop: 3,color:'#00a550'}}>
+                                {/* {location?"lat: "+location?.coords.latitude+"- long: "+location?.coords.longitude:"Get Location"} */}
+                                {location ? 'Đã lấy vị trí thành công' : 'Lấy vị trí'}
                             </Text>
                         </TouchableOpacity>
                     </View>
+{/*                     
+                    <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 ,borderWidth:1}}>
+                    
+                    </View> */}
             </View>
 
             <View style={{backgroundColor: '#fff'}}>

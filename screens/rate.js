@@ -60,7 +60,7 @@ const rate  = ({navigation,route}) => {
             dates : date + '/' + month + '/' + year
         }
         
-        console.log(resp);
+        // console.log(resp);
         await axios.post(`${host}/ratingAPI`,resp).then((data)=>{
             
             Alert.alert("Cảm ơn bạn đã đánh giá")

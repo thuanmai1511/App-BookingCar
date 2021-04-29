@@ -44,9 +44,24 @@ const myTrip = ({navigation,route})=> {
 
         })
     }
-    console.log(data);
+    // console.log(data);
 
-
+    const completed = (com , number) => {
+        // console.log(com , number);
+        const respone = {
+            idCar: com,
+            number : number
+        }
+        axios.post(`${host}/Completed`,respone).then(dt=>{
+            Alert.alert(
+                "Bạn chắc chắn đã nhận được.",
+                "",
+                [
+                  { text: "OK" , onPress: () => getDataAPI()}
+                ]
+              );
+        })
+    }
 
     React.useEffect(()=>{getDataAPI()},[])
     return(
@@ -85,17 +100,17 @@ const myTrip = ({navigation,route})=> {
                 
             {
                 data.map((it,index)=>(
-            <View key={index} style={{width:"90%",borderRadius:10}}>
+            <View key={index} style={{width:"95%",borderRadius:10}}>
                     
                     <View style={{width:"100%", height:200,justifyContent:'center',alignItems:'center',marginTop:5}}>
                     
                         <Image
                         source={{uri: host + '/' + it.idCar.imagesCar}}
-                        style={{width: 320, height: 200,borderTopLeftRadius:5, borderTopRightRadius:5}}
+                        style={{width: 325, height: 200,borderTopLeftRadius:5, borderTopRightRadius:5}}
                         
                         />
                      </View>
-
+                <View style={{borderWidth:1 ,borderBottomRightRadius:10, borderBottomLeftRadius:10,borderColor:'#00a550',marginTop:5}}>
                     <View style={{backgroundColor:'#fff' ,height:120}}>
                         <Text style={{fontWeight:'bold' , fontSize:12, paddingHorizontal:10 , paddingTop:10,textAlign:'center'}}>THÔNG TIN XE</Text>
                         <View style={{flexDirection:'row' ,marginTop:10}}>
@@ -114,7 +129,7 @@ const myTrip = ({navigation,route})=> {
                        
                     </View>
 
-                    <View style={{marginTop:5,backgroundColor:'#fff' ,height:320}}>
+                    <View style={{marginTop:5,backgroundColor:'#fff' ,height:360,borderBottomLeftRadius:10,borderBottomRightRadius:10}}>
                         <Text style={{fontWeight:'bold' , fontSize:12, paddingHorizontal:10 , paddingTop:10,textAlign:'center'}}>THÔNG TIN CHUYẾN</Text>
                        
                          <View style={{flexDirection:'row',marginTop:10 , justifyContent:'center',alignItems:'center'}}>
@@ -123,13 +138,24 @@ const myTrip = ({navigation,route})=> {
                         <Text style={{fontSize:18}}>{it.dateEnd}</Text>
                     </View>
 
+                    <View style={{flexDirection:'row'}}>
+                            <Text style={{paddingHorizontal:15 , width:150 , marginTop: 10 ,fontWeight:'bold' ,fontSize:12 }}>Mã chuyến</Text>
+                            <Text style={{marginTop: 5,fontWeight:'bold'}}>#{it._id.slice(0,6)}</Text>
+                        </View>
                         <View style={{flexDirection:'row'}}>
                             <Text style={{paddingHorizontal:15 , width:150 , marginTop: 10 ,fontWeight:'bold' ,fontSize:12 }}>Địa chỉ</Text>
-                            <Text style={{marginTop: 5}}>311 Nguyễn Văn Cừ</Text>
+                            <Text style={{marginTop: 5,width:180}}>{it.idCar.ward} , {it.idCar.district} {it.idCar.address}</Text>
+                        </View>
+                        <View style={{flexDirection:'row'}}>
+                            <Text style={{paddingHorizontal:15 , width:150 , marginTop: 10 ,fontWeight:'bold' ,fontSize:12 }}>Giao xe</Text>
+                            
+                             {
+                                it.feeExpress != 0 ? <Text  style={{marginTop: 5}}>Có hỗ trợ giao xe</Text> : <Text  style={{marginTop: 5}}>Không hỗ trợ</Text>
+                             }
                         </View>
                         <View style={{flexDirection:'row'}}>
                             <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold' ,fontSize:12 }}>Tổng cộng</Text>
-                            <Text style={{fontWeight:'bold',marginTop: 5}}>{(Number(it.price) * Number(it.dateNumber)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
+                            <Text style={{fontWeight:'bold',marginTop: 5}}>{(Number(it.price)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
                         </View>
                         <View style={{flexDirection:'row'}}>
                             <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold' ,fontSize:12 }}>Trạng thái</Text>
@@ -139,7 +165,7 @@ const myTrip = ({navigation,route})=> {
                             }
                         </View>
                         
-                        <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
+                        <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 10 }}>
                             <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
                         </View>
                    
@@ -157,8 +183,22 @@ const myTrip = ({navigation,route})=> {
                             <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold',fontSize:12 }}>Địa chỉ</Text>
                             <Text style={{marginTop: 5}}>{it.idCar.district} , {it.idCar.address}</Text>
                         </View>
+                        <View style={{flexDirection:'row',marginTop:10}}>
+                            <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold',fontSize:12 }}>Hoàn thành</Text>
+
+                            {
+                                it.checkCompleted == 1 ? <Text style={{marginTop:3,fontSize:12,color:'#00a550'}}>Giao dịch đã hoàn thành</Text> 
+                                :
+                            <TouchableOpacity style={{borderWidth:1, width:170 , borderRadius:5,borderColor:'#00a550'}} onPress={()=>completed(it.idCar._id,1)}>
+                                <Text style={{textAlign:'center',fontSize:12,color:'#00a550'}}>Nhấn vào khi đã nhận xe</Text>
+                            </TouchableOpacity>
+                            }
+                           
+                            
+                        </View>
                     </View>
-                    <View style={{marginTop:5}}></View>
+                </View>
+                    <View style={{marginTop:20}}></View>
 
                     
                 

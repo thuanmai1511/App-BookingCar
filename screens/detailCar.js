@@ -94,13 +94,16 @@ const detailCar = ({navigation,route})=> {
         }else {
            
             const  p = dataDetailCar.map((k)=>(
-                route.params.data ? (Number(k.price) + Number(servicePrice) - Number(route.params.data))
-                : (Number(k.price) + Number(servicePrice))
+                ((Number(k.price) + (Number(route.params.km?route.params.km:0) * Number(10000)) - Number(route.params.data?route.params.data:0)) * Number(route.params.n?route.params.n:''))   
     
             ))
-            const i = dataDetailCar.map((id)=>(id.idUser))
             // console.log(p);
+            
+            const i = dataDetailCar.map((id)=>(id.idUser))
+            const j = route.params.km ? (Number(route.params.km) * Number(10000)) : 0
+            // console.log(j)
             const respone = {
+                arrDates : route.params.arrDate,
                 dateStart : route.params.s, 
                 dateEnd : route.params.e,
                 DateNumber : route.params.n,
@@ -108,11 +111,12 @@ const detailCar = ({navigation,route})=> {
                 idUser: value,
                 idH : i,
                 price : p,
-                resp : 0
+                resp : 0,
+                fee : j
     
             }
             // console.log(respone);
-            if(respone.dateStart == undefined || respone.dateEnd == undefined ){
+            if(respone.dateStart == undefined || respone.dateEnd == undefined || respone.arrDates == undefined){
                 Alert.alert("Vui lòng chọn ngày thuê")
             }else {
                 await axios.post(`${host}/checkout`,respone).then(()=>{
@@ -128,19 +132,19 @@ const detailCar = ({navigation,route})=> {
         await axios.post(`${host}/reviewAPI`, {id})
         .then(dt=>{
             setDataReview(dt.data)
-            // console.log(dt.data);
+            
             
         })
     } 
     // console.log(dataReview);
     React.useEffect(  ()=>{
-        detailCars() , selectedHeart() , getName() 
+        detailCars() , selectedHeart() , getName()  
     },[])
 
-    // console.log(dataDetailCar);
+    // console.log(dataDetailCar);  
     
 
-    const servicePrice = Number(200000)
+    // const servicePrice = Number(200000)
 
    
     
@@ -260,7 +264,7 @@ const detailCar = ({navigation,route})=> {
                     
                     <Text style={{fontSize:12,marginVertical:2, width:80}}>{route.params.e ? route.params.e : 'Ngày kết thúc'}</Text>
                 </View>
-                <TouchableOpacity style={{width:50,height:25,backgroundColor:'white',marginTop:10,borderColor:'#00a550',borderWidth:1,left:160}} onPress={()=>navigation.navigate("calendarSave")}>
+                <TouchableOpacity style={{width:50,height:25,backgroundColor:'white',marginTop:10,borderColor:'#00a550',borderWidth:1,left:160}} onPress={()=>navigation.navigate("calendarSave",{idc : route.params.ids})}>
                             <Text style={{textAlign:'center',color:'#00a550',paddingTop:5,fontSize:10,fontWeight:'bold'}}>THAY ĐỔI</Text>   
                         </TouchableOpacity> 
        
@@ -284,7 +288,7 @@ const detailCar = ({navigation,route})=> {
                     }
                     
                 
-                    <Text style={{fontSize:12,marginVertical:2,opacity:0.5}}>Địa chỉ cụ thể sẽ được hiển thị sau khi đặt cọc.</Text>
+                    <Text style={{fontSize:12,marginVertical:2,opacity:0.5}}>Chi phí giao xe 10.000đ/1km (nếu có)</Text>
                 </View>
                
               </View>
@@ -301,13 +305,14 @@ const detailCar = ({navigation,route})=> {
                      </TouchableOpacity>
                 ))
             }
+          
                 
             </View>
-            <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
-                        <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
-            </View>
+                <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
+                            <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
+                </View>
 
-          
+           
 
           </View>
             
@@ -323,19 +328,24 @@ const detailCar = ({navigation,route})=> {
                         {
                         dataDetailCar.map((t)=>(
                             
-                            <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,paddingLeft:155 }}>{Number(t.price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}/ ngày</Text>
+                            <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,paddingLeft:150 }}>{Number(t.price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}/ ngày</Text>
                         ))
                     }
                        
                     </View>
                    
-                    <View style={{flexDirection:'row'}}>
+                    {/* <View style={{flexDirection:'row'}}>
                         <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,width:100}}>Phí dịch vụ</Text>
                         <Text style={{fontSize:12,paddingHorizontal:10,paddingLeft:155,marginTop:10,opacity:0.5}}>{Number(servicePrice).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</Text>
+                    </View> */}
+                     
+                    <View style={{flexDirection:'row'}}>
+                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,width:100}}>Phí giao xe</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,paddingLeft:150,marginTop:10,opacity:0.5}}> {route.params.km ? (Number(route.params.km) * Number(10000)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') : '0'}đ</Text>
                     </View>
                      <View style={{flexDirection:'row'}}>
                         <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,width:100}}>Giảm giá</Text>
-                        <Text style={{fontSize:12,paddingHorizontal:10,paddingLeft:155,marginTop:10,opacity:0.5}}>-{route.params.data ? Number(route.params.data).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'): '0.00'}</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,paddingLeft:150,marginTop:10,opacity:0.5}}>-{route.params.data ? Number(route.params.data).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'): '0.00'}</Text>
                     </View>
                     
                 </View>
@@ -349,8 +359,7 @@ const detailCar = ({navigation,route})=> {
                         <Text style={{fontSize:12,paddingHorizontal:10,width:120}}>Tổng phí thuê xe</Text>
                         {
                             dataDetailCar.map((l)=>(
-                                <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,paddingLeft:110}}>{ route.params.data ? (Number(l.price) + Number(servicePrice) - Number(route.params.data)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') 
-                                : (Number(l.price) + Number(servicePrice)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') } x 1 ngày</Text>
+                                <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,paddingLeft:110}}>{(Number(l.price) + (Number(route.params.km?route.params.km:0) * Number(10000)) - Number(route.params.data?route.params.data:0)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} x {route.params.n ? route.params.n : 1 } ngày</Text>
                             ))
                         }
                       
@@ -375,8 +384,10 @@ const detailCar = ({navigation,route})=> {
                         <Text style={{fontSize:12,paddingHorizontal:10,width:120,fontWeight:'bold'}}>Tổng cộng</Text>
                         {
                             dataDetailCar.map((k)=>(
-                                <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,paddingLeft:130,fontWeight:'bold'}}>{ route.params.data ? (Number(k.price) + Number(servicePrice) - Number(route.params.data)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') 
-                                : (Number(k.price) + Number(servicePrice)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') }đ</Text>
+                                <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,paddingLeft:130,fontWeight:'bold'}}>
+                                {((Number(k.price) + (Number(route.params.km?route.params.km:0) * Number(10000)) - Number(route.params.data?route.params.data:0)) * Number(route.params.n?route.params.n:'') ).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}    
+                                    
+                                đ</Text>
                
                             ))
                         }
@@ -525,13 +536,13 @@ const detailCar = ({navigation,route})=> {
                 </View>
                
           </View>
-          <View style={{marginTop:5,height:300,width:"100%", backgroundColor:'white'}}>
+          <View style={{marginTop:5,height:350,width:"100%", backgroundColor:'white'}}>
               <View style={{flexDirection:'row'}}>
                 <Text style={{fontSize:12,fontWeight:'bold', marginVertical:10,paddingHorizontal:10}}>ĐÁNH GIÁ </Text>
                  <Text style={{fontSize:12, left: 200,paddingHorizontal:10, marginVertical:10}}>{dataReview.length} nhận xét</Text>
               </View>
             
-            
+            <ScrollView>
             {
                 dataReview.map((dt,index)=>(
                     <View key={index}>
@@ -551,7 +562,7 @@ const detailCar = ({navigation,route})=> {
                                 <View style={{paddingHorizontal: 10}}>
                                     
                                     <Avatar.Image
-                                    source={{uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2vO2n-_DpXS1ZSm8d4Tn743V5FTuU2tYhEw&usqp=CAU"}}
+                                    source={{uri: host+"/"+dt?.idRating.images}}
                                     size={50}
                                     />
                                     
@@ -559,8 +570,8 @@ const detailCar = ({navigation,route})=> {
                                 </View>
                                 <View style={{flexDirection:'column'}}>
                                     <View style={{flexDirection:'row'}}>
-                                        <Text style={{fontSize: 14 , fontWeight:'bold', paddingHorizontal: 5}}>Mai Khánh Thuận</Text>
-                                        <Text style={{fontSize:12 , left:90}}>{dt.date}</Text>
+                                        <Text style={{fontSize: 14 , fontWeight:'bold', paddingHorizontal: 5,width:150}}>{dt?.idRating.name}</Text>
+                                        <Text style={{fontSize:12 ,left:70}}>{dt.date}</Text>
                                     </View>
                                     
                                   
@@ -600,7 +611,7 @@ const detailCar = ({navigation,route})=> {
                                         }
                                    
                                     <View style={{paddingHorizontal: 5, marginTop: 20 , width:"70%"}}>
-                                        {/* <Text style={{fontSize:12, textAlign:'justify'}}>{dt.comment}</Text> */}
+                                        <Text style={{fontSize:12, textAlign:'justify'}}>{dt.comment}</Text>
                                     </View>
                                 </View>
                                 
@@ -608,7 +619,7 @@ const detailCar = ({navigation,route})=> {
                     </View>
                 ))
             }
-              
+            </ScrollView>
                 <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
                     <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
                 </View>
