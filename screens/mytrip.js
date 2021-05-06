@@ -68,12 +68,14 @@ const myTrip = ({navigation,route})=> {
     const completed = (com , number) => {
         // console.log(com , number);
         const respone = {
-            idCar: com,
+            id: com,
             number : number
         }
+        console.log(respone);
         axios.post(`${host}/Completed`,respone).then(dt=>{
+            // console.log(dt.data);
             Alert.alert(
-                "Bạn chắc chắn đã nhận được.",
+                "Bạn chắc chắn đã nhận được xe.",
                 "",
                 [ {
                     text: "Cancel",
@@ -84,6 +86,7 @@ const myTrip = ({navigation,route})=> {
                 ]
               );
         })
+        
     }
     
     React.useEffect(()=>{getDataAPI()},[])
@@ -217,7 +220,7 @@ const myTrip = ({navigation,route})=> {
                                 {
                                     it.checkCompleted == 1 ? <Text style={{marginTop:3,fontSize:12,color:'#00a550'}}>Giao dịch đã hoàn thành</Text> 
                                     :
-                                <TouchableOpacity style={{borderWidth:1, width:170 , borderRadius:5,borderColor:'#00a550'}} onPress={()=>completed(it.idCar._id,1)}>
+                                <TouchableOpacity style={{borderWidth:1, width:170 , borderRadius:5,borderColor:'#00a550'}} onPress={()=>completed(it._id,1)}>
                                     <Text style={{textAlign:'center',fontSize:12,color:'#00a550'}}>Nhấn vào khi đã nhận xe</Text>
                                 </TouchableOpacity>
                             }

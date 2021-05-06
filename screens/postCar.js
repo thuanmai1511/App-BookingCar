@@ -26,9 +26,10 @@ import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome5 } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons'; 
 import { Octicons } from '@expo/vector-icons';
+import Geocoder from 'react-native-geocoding';
 
 const postCar = ({navigation,route})=> {
-
+    Geocoder.init("AIzaSyBHRMxpBKc25CMHY51h1jrnCCm6PjNs62s");
     const [dataCar , setDataCar] = React.useState([])
     const [modalVisible, setModalVisible] = React.useState(false);
     const [modalVisibles, setModalVisibles] = React.useState(false);
@@ -55,10 +56,21 @@ const postCar = ({navigation,route})=> {
         
         await axios.get(`${host}/getDetailCar/type=`+title).then((res)=>{
             // console.log(res.data);
-            res.data.map((val)=>{
-                
+            res.data.map(async(val)=>{
+                let a = []
+                for (var b of res.data){
+                const {latitude, longitude} =b.location.coords
+                const gg = await Geocoder.from({
+                    latitude,
+                    longitude
+                });
+
+                b['address'] = gg.results[0].formatted_address
+                a.push(b)
+            }
+            
                 if(val.status == true && val.idUser != value){
-                    setDataCar(previous=>[...previous, val])
+                    setDataCar(a)
                     setDataFilterSeat(previous=>[...previous, val])
                     setDataFilterModel(previous=>[...previous, val])
                     setDataFilter(previous=>[...previous, val])
@@ -152,30 +164,16 @@ const postCar = ({navigation,route})=> {
                 </View>
                 
             </TouchableOpacity>
-            {/* <TouchableOpacity style={{ height: 25, width: 200, borderRadius:15, marginHorizontal: 10,borderColor:'#fff',borderWidth:1,backgroundColor:'#fff'}} >
-                <View style={{flexDirection:'row' , alignContent:'center',justifyContent:'center'}}>
-                    <Ionicons name="car-sport-outline" color="black" style={{fontSize: 15,paddingTop: 3,fontWeight:'bold'}}></Ionicons>
-                    <Text style={{textAlign:'center', paddingTop: 2 , fontSize: 12,marginLeft:2,color:'black'}}>Loại xe</Text>
-                   
-                </View>
-                
-            </TouchableOpacity> */}
+           
             <View>
                 <TextInput 
-                    style={{borderWidth:1 , width:200 , borderColor:'white', backgroundColor:'white',fontSize:12, borderRadius:15,height: 25}}
+                    style={{borderWidth:1 , width:200 , borderColor:'white', backgroundColor:'white',fontSize:12, borderRadius:15,height: 25,paddingLeft:10}}
                     onChangeText={value=>search(value)}
                     value={text}
                     placeholder =  " Nhập tìm kiếm ..."
                 />
             </View>
-            {/* <TouchableOpacity style={{ height: 25, width: 100, borderRadius:15, marginHorizontal: 10,borderColor:'#fff',borderWidth:1,backgroundColor:'#fff'}} >
-                <View style={{flexDirection:'row' , alignContent:'center',justifyContent:'center'}}>
-                    <Ionicons name="car-sport-outline" color="black" style={{fontSize: 15,paddingTop: 3,fontWeight:'bold'}}></Ionicons>
-                    <Text style={{textAlign:'center', paddingTop: 2 , fontSize: 12,marginLeft:2,color:'black'}}>Loại xe</Text>
-                   
-                </View>
-                
-            </TouchableOpacity> */}
+            
         </View>
 
             {
@@ -192,7 +190,7 @@ const postCar = ({navigation,route})=> {
                     style={{width:"100%", height: "100%",borderTopLeftRadius:10,borderTopRightRadius:10}}
                 />
             </View>
-            <View style={{width:"90%", height:120, backgroundColor:"#ffffff",borderBottomEndRadius:5,borderBottomLeftRadius: 5,shadowColor: "#000",
+            <View style={{width:"90%", height:130, backgroundColor:"#ffffff",borderBottomEndRadius:5,borderBottomLeftRadius: 5,shadowColor: "#000",
 shadowOffset: {
 	width: 0,
 	height: 3,
@@ -204,12 +202,12 @@ elevation: 7,}}>
                 <Text  style={{marginTop: 10,marginLeft: 10,fontSize: 15,fontWeight:'bold'}}>{item.carModel} {item.carName}</Text>
                 <View style={{flexDirection:'row'}}>
                      <Text style={{marginTop: 5,marginLeft: 10}}>5.0 <Ionicons name="star-outline" style={{color:'green', fontSize: 14}}></Ionicons> </Text>
-                     <Text style={{marginTop: 7,marginLeft: 10,fontSize: 12}}>22 chuyến</Text>
+                     <Text style={{marginTop: 7,marginLeft: 10,fontSize: 12,width:120}}>22 chuyến</Text>
                      <View style={{flexDirection:'row'}}>
-                        <Text style={{left:70,color:'#00a550',fontSize:18,fontWeight:'bold'}}>
+                        <Text style={{color:'#00a550',fontSize:18,fontWeight:'bold'}}>
                         {Number(item.price).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}
                         </Text>
-                        <Text style={{left:70,fontSize:12,marginTop:5}}>/ngày</Text>
+                        <Text style={{fontSize:12,marginTop:5}}>/ngày</Text>
                     </View>
                     
                 </View>
@@ -219,7 +217,7 @@ elevation: 7,}}>
                 </View>
                 <View style={{flexDirection:'row'}}>
                     <Text style={{marginTop: 10,marginLeft: 10}}><Ionicons name="location-outline" style={{ fontSize: 14}}></Ionicons></Text>
-                    <Text style={{marginTop: 9,marginLeft: 5, fontSize:12}}>{item.ward} , {item.district} , {item.address}</Text>
+                    <Text style={{marginTop: 9,marginLeft: 5, fontSize:12,width:'90%'}}>{item.address}</Text>
                 </View>
                 
             </View>

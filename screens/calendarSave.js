@@ -25,46 +25,76 @@ const calendarScreen = ({navigation,route})=> {
     const save = async () => {
         // const value = await AsyncStorage.getItem('id');
         const idCar = route.params.idc;
-        console.log(idCar);
-        const check = await axios.post(`${host}/dateChecked`, {id: idCar})
-        console.log(check.data);
         var err = false;
-        // console.log(selectDate);
-        selectDate.map(item => {
-            if(check.data.indexOf(item) !== -1) {
-                err = true;
-            }
-            // console.log(item);
+        await axios.post(`${host}/dateChecked`, {id: idCar}).then((dt)=>{
+            dt.data.map(data=>{
+                    // console.log(data);
+                    selectDate.map(item => {
+                        if(data.day.indexOf(item) !== -1) {
+                            err = true;
+                        }
+                    })
+                
+            })
         })
         // console.log(err);
         if(err) {
-            Alert.alert("Trùng ngày");
+            Alert.alert(
+                "",
+                "Ngày đã có người đặt trước",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                  },
+                  { text: "OK", onPress: () => console.log("OK Pressed") }
+                ]
+              );
         } else {
             navigation.navigate("detailCar",{s: startDate,e:enddate,n:number,arrDate: selectDate })
         }
-        // console.log(check.data);
+        
     }
     
-    // console.log(selectDate);
-    const showDate = async () => {
+    
+    const showDated = async () => {
+       
         const idCar = route.params.idc;
         const checks =  await axios.post(`${host}/dateChecked`, {id: idCar})
-        const myObj = {}
         var daylist = checks.data
-        var arr = daylist
-        for(var a of arr){
+        myObj = {}
+        daylist.map(dt=>{
+            if(dt.st == "1"){
+                for(var a of dt.day){
+                    // console.log(daylist.day);
+                    myObj[a] = {
+                        color: 'gray',
+                        textColor: 'white',
+        
+                    };
+                }
+    
+            }else {
 
-            myObj[a] = {
-                color: 'gray',
-                textColor: 'white',
-
-            };
-        }
+            }
+            
+        })
+        
+        // var arr = daylist
+        // console.log(arr);
+       
+       
+    
         setMakeDate(myObj)
+        // console.log(makeDate);
 
     } 
+
+
     React.useEffect(()=>{
-        showDate()
+        showDated()
+        
     },[])
 
 

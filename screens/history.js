@@ -49,7 +49,7 @@ const historyPage = ({navigation,route})=> {
         
         <View style={{  backgroundColor: '#d6d9dc',height:"100%"}}>
        
-                  
+       <ScrollView> 
             <View style={{ flexDirection: 'row', backgroundColor:'black', alignItems:"center", marginTop: 30, padding: 20}}>
                     <TouchableOpacity
                     onPress={ () => navigation.goBack()}
@@ -68,14 +68,17 @@ const historyPage = ({navigation,route})=> {
                 
             </View>
             {
+
                 dataNew.map((item, index)=>(
-                    <View key={index}>
+                    
+                <View key={index}>
+                   
                         <View style={{justifyContent:'center' , alignItems:'center',marginTop:20}}>
                             <View style={{ height:190 , width:"95%",borderRadius:10,backgroundColor:"#fff"}}> 
                             <View style={{flexDirection:'row'}}>
                                 <Text style={{marginLeft:10, marginTop:10,fontWeight:'bold'}}>Đặt xe </Text>
                                 <Text style={{marginTop:10,color:'grey'}}>#{item._id.slice(0,6)}</Text>
-                                <Text style={{marginTop:10,left:150,color:'grey'}}>07/04/2021</Text>
+                                <Text style={{marginTop:10,left:150,color:'grey'}}>{item.currDate}</Text>
                             </View>
                             <View style={{flexDirection:'row',marginTop:10, width:"55%", marginLeft:5}}>
                             
@@ -109,11 +112,12 @@ const historyPage = ({navigation,route})=> {
                 
             </View>
             
-
+        
                     </View>
                 ))
             }
-           
+            <View style={{marginTop:10}}></View>
+    </ScrollView>  
 </View>
     )
 }
