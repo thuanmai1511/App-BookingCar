@@ -25,33 +25,25 @@ import * as Location from 'expo-location';
 import { Entypo } from '@expo/vector-icons'; 
 import imgCar from '../images/car.png';
 import man from '../images/bussiness-man.png';
-const Map = ({navigation,route})=> {
+const maps= ({navigation,route})=> {
     
-    const [location, setLocation] = useState(null);
+    // const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
 
     const [mapRegion , setMapRegion] = React.useState(null)
     // const [location , setLocation] = React.useState(null)
 
     const [locationCar , setLocationCar] = React.useState(null)
-    const [distance , setDistance] = React.useState(0)
+   
 
 
-    // console.log(route.params.id);   
-
-    const getLatLongCar = async () => {
-
-        await axios.post(`${host}/getLatLong` , {idCar :route.params.id})
-        .then(res=>{
-            // console.log(res.data);
-            setLocationCar(res.data.location)
-            // console.log(res.data.location);
-            
-        })
-        
-    }
-    // console.log(location);
     
+
+    const setStep =  () => {
+
+        setLocationCar(route.params.data[0])
+    }
+
     React.useEffect(() => {
         (async () => {
           let { status } = await Location.requestPermissionsAsync();
@@ -61,7 +53,7 @@ const Map = ({navigation,route})=> {
           }
     
           let location = await Location.getCurrentPositionAsync({});
-          setLocation(location);
+        //   setLocation(location);
           
          await setMapRegion({
               longitude: location.coords.longitude,
@@ -69,25 +61,32 @@ const Map = ({navigation,route})=> {
               longitudeDelta : 0.0922,
               latitudeDelta: 0.0421 
             });
-            getLatLongCar()
+           setStep()
         
         })();  
       },  []);
 
-    //   console.log(location);
-    const distanceFee = (e) => {
-        // console.log(e);
-        
-        e ? navigation.navigate('detailCar', {km: e, locationUser: location}) : 0
-        // console.log(e);
-    } 
-    
+    //   console.log(locationCar);   
 
     return(
         <View style={{flex: 1,backgroundColor: '#fff',alignItems: 'center',justifyContent: 'center',}}>
             <MapView style={{ width: Dimensions.get('window').width,height: Dimensions.get('window').height,}} initialRegion={mapRegion}> 
             
+
             {
+                locationCar ? <Marker
+                coordinate = {{
+                    longitude: locationCar?.coords.longitude,
+                    latitude: locationCar?.coords.latitude
+                }}
+
+            
+            >
+              
+                <Image source={imgCar} style={{}}/>
+            </Marker> : null
+            }
+            {/* {
                 (mapRegion && locationCar) ? 
                 <>
                 <Marker
@@ -130,45 +129,9 @@ const Map = ({navigation,route})=> {
                
                 </>
                  : <></>
-            }
+            } */}
             </MapView>
-            <View style={{height:150 }}>
-                <View style={{justifyContent:'center',alignItems:'center'}}>
-                    <Text style={{fontSize:20}}>Khoảng cách: {((mapRegion && locationCar))?(Number(getDistance({
-                            longitude: mapRegion.longitude,
-                            latitude: mapRegion.latitude
-                        },{
-                            longitude: locationCar?.coords.longitude,
-                            latitude: locationCar?.coords.latitude
-                        }))/1000).toFixed(1) + " km":"Đang tính"}
-                    </Text>
-
-                    {   (mapRegion && locationCar)?
-                            <>{
-                                ((Number(getDistance({
-                                    longitude: mapRegion.longitude,
-                                    latitude: mapRegion.latitude
-                                },{
-                                    longitude: locationCar?.coords.longitude,
-                                    latitude: locationCar?.coords.latitude
-                                }))/1000).toFixed(1)  < 5) ?  
-                            <TouchableOpacity style={{borderWidth:1,width:80,height:30,borderColor:'#00a550' ,marginTop:5,borderRadius:5}} onPress={()=>distanceFee((Number(getDistance({
-                                longitude: mapRegion.longitude,
-                                latitude: mapRegion.latitude
-                            },{
-                                longitude: locationCar?.coords.longitude,
-                                latitude: locationCar?.coords.latitude
-                            }))/1000).toFixed(1))}>
-                                <Text style={{paddingTop:5,textAlign:'center'}}>Giao xe</Text>
-                            </TouchableOpacity>
-                            : <Text>Không hỗ trợ giao xe</Text>
-                            }</>:<></>
-                    }
-                       
-                    </View>
-               
-                
-            </View>
+            
         </View>
         
     )
@@ -176,4 +139,4 @@ const Map = ({navigation,route})=> {
 
 
 
-export default Map;
+export default maps;

@@ -31,8 +31,9 @@ const historyPage = ({navigation,route})=> {
         const data = route.params.dataNavi;
         
         const dataF = data.filter(dt=> {
-            return dt.status == 1
+            return dt.checkCompleted == 1
         })
+        // console.log(dataF);
         setDataNew(dataF)
     }
 //    console.log(dataNew.status);
@@ -73,8 +74,8 @@ const historyPage = ({navigation,route})=> {
                             <View style={{ height:190 , width:"95%",borderRadius:10,backgroundColor:"#fff"}}> 
                             <View style={{flexDirection:'row'}}>
                                 <Text style={{marginLeft:10, marginTop:10,fontWeight:'bold'}}>Đặt xe </Text>
-                                <Text style={{marginTop:10,color:'grey'}}>#230223-23132 </Text>
-                                <Text style={{marginTop:10,marginHorizontal:85,color:'grey'}}>07/04/2021</Text>
+                                <Text style={{marginTop:10,color:'grey'}}>#{item._id.slice(0,6)}</Text>
+                                <Text style={{marginTop:10,left:150,color:'grey'}}>07/04/2021</Text>
                             </View>
                             <View style={{flexDirection:'row',marginTop:10, width:"55%", marginLeft:5}}>
                             
@@ -87,7 +88,7 @@ const historyPage = ({navigation,route})=> {
                                 <Text style={{marginTop:10,marginLeft:5}}>{item.idCar.carModel} {item.idCar.carName}</Text>
                                 <Text style={{marginTop:10,marginLeft:5}}>{item.idCar.district} {item.idCar.address}</Text>
                             
-                                <Text style={{marginTop:10,marginLeft:5,fontWeight:'bold'}}>{(Number(item.price) * Number(item.dateNumber)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
+                                <Text style={{marginTop:10,marginLeft:5,fontWeight:'bold'}}>{(Number(item.price)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
                             </View>
                             
                         </View>
@@ -96,7 +97,7 @@ const historyPage = ({navigation,route})=> {
                         </View>
                         <View style={{flexDirection:'row',height:50,marginTop:5}}>
                             {
-                                item.status == 1 ? <Text style={{marginLeft:15 , fontWeight:'bold',color:'#00a550'}}>Hoàn thành</Text> : ''
+                                item.checkCompleted == 1 ? <Text style={{marginLeft:15 , fontWeight:'bold',color:'#00a550'}}>Hoàn thành</Text> : ''
                             }
                             
                             <TouchableOpacity style={{left:130,borderWidth:1,borderRadius:10,height:25,width:70,borderColor:'#e8eaef'}} onPress={()=>navigation.navigate("rate",{data: item.idHost})}>

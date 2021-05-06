@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     View,
     Text,
@@ -10,21 +10,24 @@ import {
     Alert,
     TouchableOpacity
 } from 'react-native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
-import { LinearGradient } from 'expo-linear-gradient';
-// import { TouchableOpacity } from 'react-native-gesture-handler';
-import imgLogin from '../images/imgLogin.jpeg';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import host from '../port/index';
 import { AsyncStorage } from 'react-native';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 
 
 
 const SigninScreen = ({navigation}) =>{
     const [username , setUsername] = React.useState('');
     const [password , setPassword] = React.useState('');
+
+    const [expoPushToken, setExpoPushToken] = useState('');
+    const [notification, setNotification] = useState(false);
+    const notificationListener = useRef();
+    const responseListener = useRef();
+
 
     const storeData = async (id) => {
         try {
@@ -35,7 +38,7 @@ const SigninScreen = ({navigation}) =>{
       };
      const retrieveData = async () => {
         try {
-          const value = await AsyncStorage.getItem('id');
+          // import { AsyncStorage } from 'react-native';
           
           if (value !== null) {
             // We have data!!
@@ -72,19 +75,26 @@ const SigninScreen = ({navigation}) =>{
             // console.log("Email" , retrieveEmail());
             retrieveEmail()
 
+            
+        
+          
+
     const login = () => {
+        // console.log(expoPushToken);
         const respone = {
             usernameAPI : username,
-            passwordAPI : password
+            passwordAPI : password,
+            tokenDevice:  expoPushToken
         }
-        // console.log(respone);
         axios.post(`${host}/login`, respone)
         .then(res => {
-            // console.log(res.data);
+            // console.log(res.data.token);
             if(res.data.valid){
                 
                 storeData(res.data.id);
                 storeEmail(res.data.email);
+                // storeToken(res.data.token);
+
                 Alert.alert("Đăng nhập thành công")
                 navigation.navigate("Home")
                   }else {
@@ -93,6 +103,64 @@ const SigninScreen = ({navigation}) =>{
             
         })
     }
+
+   
+
+
+    async function registerForPushNotificationsAsync() {
+      let token;
+      if (Constants.isDevice) {
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== 'granted') {
+          const { status } = await Notifications.requestPermissionsAsync();
+          finalStatus = status;
+        }
+        if (finalStatus !== 'granted') {
+          alert('Failed to get push token for push notification!');
+          return;
+        }
+        token = (await Notifications.getExpoPushTokenAsync()).data;
+        // console.log(token);
+        // console.log(expoPushToken);
+      } else {
+        alert('Must use physical device for Push Notifications');
+      }
+    
+      if (Platform.OS === 'android') {
+        Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: '#FF231F7C',
+        });
+      }
+    
+      return token;
+    }
+    // console.log(expoPushToken);
+
+   
+
+    useEffect(() => { 
+      
+
+      registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+  
+      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+        setNotification(notification);
+      });
+  
+      responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+        console.log(response);
+      });
+  
+      return () => {
+        Notifications.removeNotificationSubscription(notificationListener.current);
+        Notifications.removeNotificationSubscription(responseListener.current);
+      };  
+        }, []);
+
 
     return(
         <View style={{backgroundColor: '#fff', height:"100%"}}>

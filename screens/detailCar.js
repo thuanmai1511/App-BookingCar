@@ -1,9 +1,9 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState,useEffect, useRef} from 'react';
 import {
     View,
     StyleSheet,
     StatusBar,
-    Image,ScrollView,TextInput, Alert, Platform ,TouchableOpacity, LogBox
+    Image,ScrollView,TextInput, Alert, Platform ,TouchableOpacity, LogBox , FlatList
 } from 'react-native';
 import {
     Avatar,
@@ -28,8 +28,11 @@ import { Feather } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
-import { set } from 'react-native-reanimated';
+import { useScrollToTop } from '@react-navigation/native';
+import Geocoder from 'react-native-geocoding';
 const detailCar = ({navigation,route})=> {
+    Geocoder.init("AIzaSyBHRMxpBKc25CMHY51h1jrnCCm6PjNs62s");
+    const refDetail = useRef(null)
 
    const [dataDetailCar , setDataDetailCar] = React.useState([])
     const [selected , setSelected] = React.useState('')
@@ -37,19 +40,62 @@ const detailCar = ({navigation,route})=> {
     const [email , setEmail] = React.useState('')
     const [img , setImg] = React.useState('')
     const [dataReview, setDataReview] = React.useState([])
-   
+    const [dataRelate, setDataRelate] = React.useState([])
+
+  
+
+  
 
     // console.log(route.params.e);
     // console.log(route.params.s);
     // console.log(route.params.n);
+
+
+    const [gallery, setgallery] = useState([
+        {image: {uri: "https://www.mioto.vn/static/media/features-2.f7d40f43.jpg"},
+        },
+        {image: {uri: "https://www.mioto.vn/static/media/features-5.5e0a5832.jpg"},
+        },
+        {image: {uri: "https://www.mioto.vn/static/media/features-6.e7932d18.jpg"},
+        },
+        {image: {uri: "https://www.mioto.vn/static/media/features-3.faaf0570.jpg"},
+        },
+        {image: {uri: "https://www.mioto.vn/static/media/features-4.df19c5f2.jpg"},
+        },
+       
+    ]);
+    
+   
     const detailCars = async () => {
         
         const idCar = route.params.ids;
         // console.log(idCar);
 
-        const detailMap = await axios.get(`${host}/detailCar/`+idCar)
-        setDataDetailCar(detailMap.data)
-        getDataReview(detailMap.data[0].idUser)
+        await axios.get(`${host}/detailCar/`+idCar)
+        .then(async(res)=>{
+            
+            const { address, _id } = res.data[0]
+            let datas = res.data;
+            // console.log(datas);
+            let a = []
+            for (var b of datas){
+                const {latitude, longitude} =b.location.coords
+                const gg = await Geocoder.from({
+                    latitude,
+                    longitude
+                });
+
+                b['address'] = gg.results[0].formatted_address
+                a.push(b)
+            }
+            
+            setDataDetailCar(a)
+            getDataReview(res.data[0].idUser)
+            relateCar(address, _id)
+            getIdToken(res.data[0].idUser)
+        })
+       
+        
             // setDataDetailCar(previous=>[...previous, val])
                 //    console.log(dataDetailCar);
     }
@@ -58,13 +104,28 @@ const detailCar = ({navigation,route})=> {
     const addFavorite = async (id) => {
         const value = await AsyncStorage.getItem('id');
         const idCar = id;
-       
-        // console.log(id,value);
-        await axios.post(`${host}/addFavorites`, {idCar , value})
-       .then(()=>{
-            // navigation.replace("detailCar")
-       })
-       selectedHeart()
+       if(!value) {
+        Alert.alert(
+            "",
+            "Bạn chưa đăng nhập",
+            [
+              {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+              },
+              { text: "OK", onPress: () => navigation.navigate('SigninScreen') }
+            ]
+          );
+       }else {
+            await axios.post(`${host}/addFavorites`, {idCar , value})
+            .then(()=>{
+        
+            })
+            selectedHeart()
+       }
+     
+        
     }
     const selectedHeart = async () =>{
         const values = await AsyncStorage.getItem('id');
@@ -100,8 +161,11 @@ const detailCar = ({navigation,route})=> {
             // console.log(p);
             
             const i = dataDetailCar.map((id)=>(id.idUser))
+            // console.log(i);
+            // await axios(`${host}/getToken`, i)
+                
             const j = route.params.km ? (Number(route.params.km) * Number(10000)) : 0
-            // console.log(j)
+            
             const respone = {
                 arrDates : route.params.arrDate,
                 dateStart : route.params.s, 
@@ -112,7 +176,8 @@ const detailCar = ({navigation,route})=> {
                 idH : i,
                 price : p,
                 resp : 0,
-                fee : j
+                fee : j,
+                location: route.params.locationUser
     
             }
             // console.log(respone);
@@ -120,7 +185,24 @@ const detailCar = ({navigation,route})=> {
                 Alert.alert("Vui lòng chọn ngày thuê")
             }else {
                 await axios.post(`${host}/checkout`,respone).then(()=>{
-                    Alert.alert("Đặt xe thành công. Vui lòng đợi chủ xe phản hồi")
+                    Alert.alert(
+                        "Đặt xe thành công",
+                        "Vui lòng đợi chủ xe xác nhận ",
+                        [
+                          {
+                            text: "Cancel",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                          },
+                          { text: "OK", onPress: () => {
+                                getIdToken() , navigation.navigate('Home')  
+                            }
+                            }
+                        ]
+                        
+                      );    
+                                
+                     
                 })
             }
           
@@ -137,14 +219,87 @@ const detailCar = ({navigation,route})=> {
         })
     } 
     // console.log(dataReview);
+
+
+    const relateCar  =  async (ad, i) => {
+        // console.log(ad,i);
+     await axios.post(`${host}/relatedCar`,{ad: ad}).then(dt=>{
+            // console.log(dt.data[0]._id);
+         const a = dt.data.filter(dl=>(dl._id) != i)
+            // console.log(a);
+         setDataRelate(a)
+        })
+        
+        
+    } 
+
+    const naviDetailCar = async (id) => {
+        await axios.get(`${host}/detailCar/`+id).then(async(res)=>{
+
+            let datas = res.data;
+            const { address, _id } = res.data[0]
+            let a = []
+                for (var b of datas){
+                    const {latitude, longitude} =b.location.coords
+                    const gg = await Geocoder.from({
+                        latitude,
+                        longitude
+                    });
+
+                    b['address'] = gg.results[0].formatted_address
+                    a.push(b)
+                }
+
+                setDataDetailCar(a)
+                relateCar(address, _id)
+            })
+        
+        refDetail.current?.scrollTo({
+            y : 0,
+            animated : true
+        })
+      
+    }
+    const getIdToken =  async (id) => {
+        // console.log(id);
+        await axios.post(`${host}/getToken`, {id})
+        .then(dt=>{
+            
+            // setDataToken(dt.data.tokenDevices)
+            // console.log(dt.data.tokenDevices);
+            for(var i of dt.data.tokenDevices){
+                sendPushNotification(i.value)
+            }
+            
+            
+        })
+    } 
+
     React.useEffect(  ()=>{
-        detailCars() , selectedHeart() , getName()  
+        detailCars() , selectedHeart() , getName()
     },[])
 
-    // console.log(dataDetailCar);  
-    
+    // console.log(dataToken.tokenDevices);
 
-    // const servicePrice = Number(200000)
+    async function sendPushNotification(expoPushToken) {
+        const message = {
+          to: expoPushToken,
+          sound: 'default',
+          title: 'BookingCar Application',
+          body: 'Xe đã có khách đặt. Hãy xác nhận với khách!',
+          data: { someData: 'goes here' },
+        };
+      
+        await fetch('https://exp.host/--/api/v2/push/send', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Accept-encoding': 'gzip, deflate',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(message),
+        });
+      }
 
    
     
@@ -152,7 +307,7 @@ const detailCar = ({navigation,route})=> {
         
         <View style={{ flex: 1 , backgroundColor: '#d6d9dc', justifyContent:'center',alignContent:'center'}}>
           
-        <ScrollView>
+        <ScrollView ref= {refDetail}>
 
         <View style={{ flexDirection: 'row', backgroundColor:'black',alignItems:"center", marginTop: 30, padding: 20}}>
                     <TouchableOpacity
@@ -243,7 +398,7 @@ const detailCar = ({navigation,route})=> {
                     {
                         dataDetailCar.map((e)=>(
                             
-                            <Text key={Math.random()} style={{marginTop: 9,marginLeft: 5, fontSize:12}}>{e.ward}, {e.district}, {e.address}</Text>
+                            <Text key={Math.random()} style={{marginTop: 9,marginLeft: 5, fontSize:12,width:350}}>{e.address}</Text>
                             
                         ))
                     }
@@ -259,13 +414,13 @@ const detailCar = ({navigation,route})=> {
               <View style={{flexDirection:'row'}}>
                 
                 <Ionicons name="calendar-outline" size={20} color="black"  style={{justifyContent:'center',alignContent:'center', marginVertical:10,paddingHorizontal:10}}/>
-                <View style={{flexDirection:'column', justifyContent:'center',alignContent:'center' ,marginLeft:10}}>
+                <View style={{flexDirection:'column', justifyContent:'center',alignContent:'center' ,marginLeft:10,width:240}}>
                     <Text style={{fontSize:12, width:80}}>{route.params.s ? route.params.s : 'Ngày bắt đầu'}</Text>
                     
                     <Text style={{fontSize:12,marginVertical:2, width:80}}>{route.params.e ? route.params.e : 'Ngày kết thúc'}</Text>
                 </View>
-                <TouchableOpacity style={{width:50,height:25,backgroundColor:'white',marginTop:10,borderColor:'#00a550',borderWidth:1,left:160}} onPress={()=>navigation.navigate("calendarSave",{idc : route.params.ids})}>
-                            <Text style={{textAlign:'center',color:'#00a550',paddingTop:5,fontSize:10,fontWeight:'bold'}}>THAY ĐỔI</Text>   
+                <TouchableOpacity style={{width:50,height:25,backgroundColor:'white',marginTop:10,borderColor:'#00a550',borderWidth:1}} onPress={()=>navigation.navigate("calendarSave",{idc : route.params.ids})}>
+                            <Text style={{textAlign:'center',color:'#00a550',paddingTop:5,fontSize:10,fontWeight:'bold'}}>CHỌN</Text>   
                         </TouchableOpacity> 
        
               </View>
@@ -282,7 +437,7 @@ const detailCar = ({navigation,route})=> {
                 {
                         dataDetailCar.map((r)=>(
                             
-                            <Text key={Math.random()} style={{fontSize:12}}>{r.district}, {r.address}</Text>
+                            <Text key={Math.random()} style={{fontSize:12,width:300}}>{r.address}</Text>
                             
                         ))
                     }
@@ -496,7 +651,7 @@ const detailCar = ({navigation,route})=> {
                         <View style={{flexDirection:'row'}}>
                             <Text style={{paddingTop:5, fontSize:18, marginLeft:10}}>5.0  </Text>    
                             {/* <Ionicons size={20} color="#00a550" name="star-outline" style={{paddingTop:5}}></Ionicons> */}
-                            <FontAwesome name="star" size={20} color="#00a550" style={{paddingTop:7}}/>
+                            <FontAwesome name="star" size={20} color="#ffa500" style={{paddingTop:7}}/>
                         </View>
                        
                     </View>
@@ -536,13 +691,15 @@ const detailCar = ({navigation,route})=> {
                 </View>
                
           </View>
-          <View style={{marginTop:5,height:350,width:"100%", backgroundColor:'white'}}>
+          
+          <View style={{marginTop:5,height:300,width:"100%", backgroundColor:'white'}}>
+            
               <View style={{flexDirection:'row'}}>
                 <Text style={{fontSize:12,fontWeight:'bold', marginVertical:10,paddingHorizontal:10}}>ĐÁNH GIÁ </Text>
                  <Text style={{fontSize:12, left: 200,paddingHorizontal:10, marginVertical:10}}>{dataReview.length} nhận xét</Text>
               </View>
             
-            <ScrollView>
+            
             {
                 dataReview.map((dt,index)=>(
                     <View key={index}>
@@ -576,55 +733,78 @@ const detailCar = ({navigation,route})=> {
                                     
                                   
                                         {
-                                            dt.rating == 1 ?<FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7}}/> : <View></View>
+                                            dt.rating == 1 ?<FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/> : <View></View>
                                         }
                                         {
                                             dt.rating == 2 ? <View style={{flexDirection:'row',marginLeft:5}}>
-                                               < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7}}/>
-                                              < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
+                                               < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                              < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
                                                 </View> : <View></View>
                                         }
                                         
                                         {
                                              dt.rating == 3 ? <View style={{flexDirection:'row',marginLeft:5}}>
-                                             < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7}}/>
-                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
-                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
+                                             < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                            < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                            < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
                                               </View> : <View></View>
                                         }
                                          {
                                              dt.rating == 4 ? <View style={{flexDirection:'row',marginLeft:5}}>
-                                             < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7}}/>
-                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
-                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
-                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
+                                             < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                            < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                            < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                            < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
                                               </View> : <View></View>
                                         }
                                          {
                                              dt.rating == 5 ? <View style={{flexDirection:'row',marginLeft:5}}>
-                                             < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7}}/>
-                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
-                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
-                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
-                                            < FontAwesome name="star" size={15} color="#00a550" style={{paddingTop:7,marginLeft:2}}/>
+                                             < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                            < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                            < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                            < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                            < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
                                               </View> : <View></View>
                                         }
                                    
-                                    <View style={{paddingHorizontal: 5, marginTop: 20 , width:"70%"}}>
+                                    <View style={{paddingHorizontal: 5, marginTop: 10 , width:"100%"}}>
                                         <Text style={{fontSize:12, textAlign:'justify'}}>{dt.comment}</Text>
                                     </View>
                                 </View>
                                 
                         </View>
+                        
                     </View>
                 ))
             }
-            </ScrollView>
-                <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
+            
+                {/* <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
                     <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
-                </View>
-             
+                </View> */}
+        
         </View>
+        <ScrollView style={{backgroundColor:'#fff',marginTop:5}}>
+            <View >
+                <Text style={{marginLeft:10,marginTop:10,fontWeight:'bold'}}>XE LIÊN QUAN</Text>
+            </View>
+            <View>
+                <FlatList horizontal={true} keyExtractor={(item, index) => index.toString()} data= {dataRelate} renderItem={({item}) => {
+                    
+                    return(
+                        <View style= {{paddingVertical: 20, paddingLeft: 8, paddingRight: 8}}>
+                            
+                            <TouchableOpacity  onPress={()=>naviDetailCar(item._id)}>
+                                <Image source={{uri : host + '/' +item.imagesCar }} style={{width: 250, height: 150, borderRadius: 15}}></Image>
+                            
+                            </TouchableOpacity>
+                        </View>
+                    )
+                    
+                }}>
+
+                </FlatList>
+            </View>
+      </ScrollView>
       </ScrollView> 
 </View>
     )

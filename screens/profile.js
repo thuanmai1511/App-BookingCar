@@ -85,6 +85,7 @@ const Profile = ({navigation}) => {
           // Error retrieving data
           return null
         }}
+        // console.log(retrieveData());
         retrieveData()
         // console.log("Id" , retrieveData());
     // console.log("Email" , retrieveEmail());

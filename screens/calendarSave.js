@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Text, View ,ScrollView,StatusBar,TouchableOpacity} from 'react-native';
+import { Button, Text, View ,ScrollView,StatusBar,TouchableOpacity,Alert} from 'react-native';
 // import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 // import { log } from 'react-native-reanimated';
 // import { height } from '../constants';
@@ -9,7 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import axios from 'axios';
 import host from '../port'
-import { Alert } from 'react-native';
+// import { Alert } from 'react-native';
 
 const calendarScreen = ({navigation,route})=> {
 
@@ -25,16 +25,18 @@ const calendarScreen = ({navigation,route})=> {
     const save = async () => {
         // const value = await AsyncStorage.getItem('id');
         const idCar = route.params.idc;
-        // console.log(idCar);
+        console.log(idCar);
         const check = await axios.post(`${host}/dateChecked`, {id: idCar})
-
+        console.log(check.data);
         var err = false;
-
+        // console.log(selectDate);
         selectDate.map(item => {
             if(check.data.indexOf(item) !== -1) {
                 err = true;
             }
+            // console.log(item);
         })
+        // console.log(err);
         if(err) {
             Alert.alert("Trùng ngày");
         } else {

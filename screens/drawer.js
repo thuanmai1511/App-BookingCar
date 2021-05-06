@@ -28,12 +28,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons'; 
-
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 export default function DrawerContent({...props}) {
     const navigation = useNavigation();
     const [user, setUser] = React.useState(null)
     const [dataProfile , setDataProfile] = React.useState('');
     const [auth , setUserAuth] = React.useState('');
+
     const retrieveEmail = async () => {
         try {
           const value = await AsyncStorage.getItem('email');
@@ -48,13 +50,66 @@ export default function DrawerContent({...props}) {
           // Error retrieving data
           return null
         }}
-    
+
+
+        async function registerForPushNotificationsAsync() {
+            let token;
+            if (Constants.isDevice) {
+              const { status: existingStatus } = await Notifications.getPermissionsAsync();
+              let finalStatus = existingStatus;
+              if (existingStatus !== 'granted') {
+                const { status } = await Notifications.requestPermissionsAsync();
+                finalStatus = status;
+              }
+              if (finalStatus !== 'granted') {
+                alert('Failed to get push token for push notification!');
+                return;
+              }
+              token = (await Notifications.getExpoPushTokenAsync()).data;
+              // console.log(token);
+              // console.log(expoPushToken);
+            } else {
+              alert('Must use physical device for Push Notifications');
+            }
+            return token;
+          }
     const onLogout = async () =>{
+        const value = await AsyncStorage.getItem('id');
         try {
-            await AsyncStorage.clear()
-            Alert.alert("Đăng xuất thành công")
+              if(value){
+                registerForPushNotificationsAsync().then(token => 
+                
+                    axios.post(`${host}/delToken`, {token: token , id: value })
+                );
+                await AsyncStorage.clear()
+                Alert.alert(
+                    "",
+                    "Đăng xuất thành công",
+                    [
+                      {
+                        text: "Cancel",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                      },
+                      { text: "OK", onPress: () => navigation.navigate('SigninScreen')}
+                    ]
+                  );
+              }else {
+                Alert.alert(
+                    "",
+                    "Bạn đã đăng xuất",
+                    [
+                      {
+                        text: "Cancel",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                      },
+                      { text: "OK", onPress: () => console.log("OK Pressed") }
+                    ]
+                  );
+              }
         } catch (err) {
-            console.log(err);
+            // console.log(err);
         }
     }
    
@@ -187,7 +242,7 @@ export default function DrawerContent({...props}) {
                             />
                             {
                                 auth ?
-                                auth == null
+                                auth == ''
                                 ? <></>
 
                                 : 

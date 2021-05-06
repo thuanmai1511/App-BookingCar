@@ -34,13 +34,14 @@ const postCar = ({navigation,route})=> {
     const [modalVisibles, setModalVisibles] = React.useState(false);
     const [dataFilterSeat , setDataFilterSeat] = React.useState([])
     const [dataFilterModel , setDataFilterModel] = React.useState([])
+    const [dataFilter , setDataFilter] = React.useState([])
     const [selected1 , setSelected1] = React.useState(false)
     const [selected2 , setSelected2] = React.useState(false)
     const [selected3 , setSelected3] = React.useState(false)
     const [selected4 , setSelected4] = React.useState(false)
     const [selected5 , setSelected5] = React.useState(false)
     const [selected6 , setSelected6] = React.useState(false)
-
+    const [text , setText] = React.useState('')
     const detailCar = async (id) => {
         const ids = id;
         navigation.navigate("detailCar",{ids})
@@ -48,30 +49,33 @@ const postCar = ({navigation,route})=> {
         
     }
     const getDataCarType = async () => {
+        const value = await AsyncStorage.getItem('id');
+        // console.log("sdasdsds",value);
         const title = route.params.title;
-        // console.log(title);
+        
         await axios.get(`${host}/getDetailCar/type=`+title).then((res)=>{
             // console.log(res.data);
             res.data.map((val)=>{
-         
-                if(val.status == true){
+                
+                if(val.status == true && val.idUser != value){
                     setDataCar(previous=>[...previous, val])
                     setDataFilterSeat(previous=>[...previous, val])
                     setDataFilterModel(previous=>[...previous, val])
+                    setDataFilter(previous=>[...previous, val])
                 }else {
     
                 }              
            })
         })
     }
-
+// console.log(dataCar);
     const carFilter = (seat) => {
         const filterCar = dataFilterSeat.filter(dt=>{
            return dt.seats == seat
         })
         setDataCar(filterCar)
     }
-    // console.log(dataFilterSeat);
+    // console.log(dataFilterSeat); 
 
     const filterModelsCar = (model,i) => {
         // console.log(model);
@@ -93,7 +97,21 @@ const postCar = ({navigation,route})=> {
         })
         setDataCar(filterCars)
     }   
+    const search  = async (t) => {
+        // console.log(t);
+       setText(t)
     
+        let i = t.toLowerCase()
+        // console.log(i);
+        let filterData = dataFilter.filter(dt=>{
+            return dt.carModel.toLowerCase().indexOf(i) != -1
+           
+        })
+        
+        setDataCar(filterData)
+
+
+    }
     
     React.useEffect(()=>{getDataCarType()},[])
 
@@ -129,27 +147,35 @@ const postCar = ({navigation,route})=> {
             <TouchableOpacity style={{ height: 25, width: 100, borderRadius:15, marginHorizontal: 10,borderColor:'#fff',borderWidth:1,backgroundColor:'#fff'}} onPress={()=>setModalVisible(true)}>
                 <View style={{flexDirection:'row' , alignContent:'center',justifyContent:'center'}}>
                     <Ionicons name="car-sport-outline" color="black" style={{fontSize: 15,paddingTop: 3,fontWeight:'bold'}}></Ionicons>
-                    <Text style={{textAlign:'center', paddingTop: 2 , fontSize: 12,marginLeft:2,color:'black'}}>Loại xe</Text>
+                    <Text style={{textAlign:'center', paddingTop: 3 , fontSize: 12,marginLeft:2,color:'black',fontWeight:'bold'}}>Loại xe</Text>
                    
                 </View>
                 
             </TouchableOpacity>
-            <TouchableOpacity style={{ height: 25, width: 100, borderRadius:15, marginHorizontal: 10,borderColor:'#fff',borderWidth:1,backgroundColor:'#fff'}} >
+            {/* <TouchableOpacity style={{ height: 25, width: 200, borderRadius:15, marginHorizontal: 10,borderColor:'#fff',borderWidth:1,backgroundColor:'#fff'}} >
                 <View style={{flexDirection:'row' , alignContent:'center',justifyContent:'center'}}>
                     <Ionicons name="car-sport-outline" color="black" style={{fontSize: 15,paddingTop: 3,fontWeight:'bold'}}></Ionicons>
                     <Text style={{textAlign:'center', paddingTop: 2 , fontSize: 12,marginLeft:2,color:'black'}}>Loại xe</Text>
                    
                 </View>
                 
-            </TouchableOpacity>
-            <TouchableOpacity style={{ height: 25, width: 100, borderRadius:15, marginHorizontal: 10,borderColor:'#fff',borderWidth:1,backgroundColor:'#fff'}} >
+            </TouchableOpacity> */}
+            <View>
+                <TextInput 
+                    style={{borderWidth:1 , width:200 , borderColor:'white', backgroundColor:'white',fontSize:12, borderRadius:15,height: 25}}
+                    onChangeText={value=>search(value)}
+                    value={text}
+                    placeholder =  " Nhập tìm kiếm ..."
+                />
+            </View>
+            {/* <TouchableOpacity style={{ height: 25, width: 100, borderRadius:15, marginHorizontal: 10,borderColor:'#fff',borderWidth:1,backgroundColor:'#fff'}} >
                 <View style={{flexDirection:'row' , alignContent:'center',justifyContent:'center'}}>
                     <Ionicons name="car-sport-outline" color="black" style={{fontSize: 15,paddingTop: 3,fontWeight:'bold'}}></Ionicons>
                     <Text style={{textAlign:'center', paddingTop: 2 , fontSize: 12,marginLeft:2,color:'black'}}>Loại xe</Text>
                    
                 </View>
                 
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
 
             {

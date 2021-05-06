@@ -25,6 +25,7 @@ import calendarScreen from './screens/calendarSave';
 import myTrip from './screens/mytrip';
 import historyPage from './screens/history';
 import rate from './screens/rate';
+import maps from './screens/maps';
 
 
 const Stack = createStackNavigator();
@@ -69,6 +70,7 @@ export default function App() {
           <Stack.Screen name="myCar" component={myCar} />
           <Stack.Screen name="favorite" component={favorites} />
           <Stack.Screen name="map" component={map} />
+          <Stack.Screen name="maps" component={maps} />
           <Stack.Screen name="calendarSave" component={calendarScreen} />
           <Stack.Screen name="myTrip" component={myTrip} />
           <Stack.Screen name="history" component={historyPage} />

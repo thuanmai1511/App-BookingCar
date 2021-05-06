@@ -15,7 +15,7 @@ import {
     Switch
 
 } from 'react-native-paper';
-
+import Geocoder from 'react-native-geocoding';
 import { AntDesign } from '@expo/vector-icons'; 
 import axios from 'axios';
 import host from '../port/index';
@@ -31,7 +31,7 @@ import { Entypo } from '@expo/vector-icons';
 import imgCar from '../images/imgCar.jpg';
 
 const myTrip = ({navigation,route})=> {
-
+    Geocoder.init("AIzaSyBHRMxpBKc25CMHY51h1jrnCCm6PjNs62s");
     const [data , getData] = React.useState([])
     
 
@@ -39,13 +39,32 @@ const myTrip = ({navigation,route})=> {
         // console.log(route.params.id);
         const idUser = route.params.id;
         await axios.post(`${host}/getDataMyTrip` , {idUser})
-        .then((res)=>{
-            getData(res.data)
+        .then(async(res)=>{
+            
+            
+            let datas = res.data
+            // console.log(res.data);
+            let a = []
+            for (var b of datas){
+                const {latitude, longitude} =b.idCar.location.coords
+                const gg = await Geocoder.from({
+                    latitude,
+                    longitude
+                });
 
+                b['address'] = gg.results[0].formatted_address
+                a.push(b)
+            }
+            // console.log(a);
+            getData(a)
         })
+        // console.log(await Geocoder.from({
+        //     latitude : 41.89,
+        //     longitude : 12.49
+        // }));
+    
     }
-    // console.log(data);
-
+   
     const completed = (com , number) => {
         // console.log(com , number);
         const respone = {
@@ -56,13 +75,17 @@ const myTrip = ({navigation,route})=> {
             Alert.alert(
                 "Bạn chắc chắn đã nhận được.",
                 "",
-                [
+                [ {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                  },
                   { text: "OK" , onPress: () => getDataAPI()}
                 ]
               );
         })
     }
-
+    
     React.useEffect(()=>{getDataAPI()},[])
     return(
         
@@ -144,7 +167,9 @@ const myTrip = ({navigation,route})=> {
                         </View>
                         <View style={{flexDirection:'row'}}>
                             <Text style={{paddingHorizontal:15 , width:150 , marginTop: 10 ,fontWeight:'bold' ,fontSize:12 }}>Địa chỉ</Text>
-                            <Text style={{marginTop: 5,width:180}}>{it.idCar.ward} , {it.idCar.district} {it.idCar.address}</Text>
+                            {/* <Text style={{marginTop: 5,width:180}}>{it.idCar.ward} , {it.idCar.district} {it.idCar.address}</Text> */}
+                            <Text style={{marginTop: 5,width:180}}>{it.address}</Text>
+
                         </View>
                         <View style={{flexDirection:'row'}}>
                             <Text style={{paddingHorizontal:15 , width:150 , marginTop: 10 ,fontWeight:'bold' ,fontSize:12 }}>Giao xe</Text>
@@ -179,23 +204,33 @@ const myTrip = ({navigation,route})=> {
                             <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold',fontSize:12 }}>Liên lạc</Text>
                             <Text style={{marginTop: 5}}>{it.idHost.phone}</Text>
                         </View>
-                        <View style={{flexDirection:'row',marginTop:5}}>
+                        {/* <View style={{flexDirection:'row',marginTop:5}}>
                             <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold',fontSize:12 }}>Địa chỉ</Text>
                             <Text style={{marginTop: 5}}>{it.idCar.district} , {it.idCar.address}</Text>
-                        </View>
-                        <View style={{flexDirection:'row',marginTop:10}}>
-                            <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold',fontSize:12 }}>Hoàn thành</Text>
+                        </View> */}
 
-                            {
-                                it.checkCompleted == 1 ? <Text style={{marginTop:3,fontSize:12,color:'#00a550'}}>Giao dịch đã hoàn thành</Text> 
-                                :
-                            <TouchableOpacity style={{borderWidth:1, width:170 , borderRadius:5,borderColor:'#00a550'}} onPress={()=>completed(it.idCar._id,1)}>
-                                <Text style={{textAlign:'center',fontSize:12,color:'#00a550'}}>Nhấn vào khi đã nhận xe</Text>
-                            </TouchableOpacity>
+                        {
+                            it.status == 1 ? 
+                            <View style={{flexDirection:'row',marginTop:10}}>
+                                <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold',fontSize:12 }}>Hoàn thành</Text>
+
+                                {
+                                    it.checkCompleted == 1 ? <Text style={{marginTop:3,fontSize:12,color:'#00a550'}}>Giao dịch đã hoàn thành</Text> 
+                                    :
+                                <TouchableOpacity style={{borderWidth:1, width:170 , borderRadius:5,borderColor:'#00a550'}} onPress={()=>completed(it.idCar._id,1)}>
+                                    <Text style={{textAlign:'center',fontSize:12,color:'#00a550'}}>Nhấn vào khi đã nhận xe</Text>
+                                </TouchableOpacity>
                             }
                            
                             
-                        </View>
+                            </View>
+                            : <></>
+                        }
+                            
+                            
+                         
+                        
+                    
                     </View>
                 </View>
                     <View style={{marginTop:20}}></View>

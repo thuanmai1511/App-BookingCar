@@ -174,29 +174,7 @@ const [city, setcity] = useState([
 }
 
 const styles = StyleSheet.create({
-    // Darkoverlay: {
-    //     position: 'absolute', 
-    //     top: 0,
-    //     left: 0,
-    //     right: 0,
-    //     height: 200,
-    //     backgroundColor:'#000',
-    //     opacity: 0.2,
-    //     borderBottomRightRadius: 65
-    // },
-    // hello: {
-    //     marginLeft: 50,
-    //     marginTop: 52,
-    //     fontSize: 12,
-    //     color: 'white'
-    // },
-    // hellos: {
-    //     marginLeft: 50,
-    //     marginTop: 52,
-    //     fontSize: 16,
-    //     color: 'white',
-    //     fontWeight: 'bold'
-    // },
+  
     bars: {
         position: 'absolute',
         marginTop: 35,
