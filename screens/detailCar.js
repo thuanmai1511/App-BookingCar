@@ -41,7 +41,7 @@ const detailCar = ({navigation,route})=> {
     const [img , setImg] = React.useState('')
     const [dataReview, setDataReview] = React.useState([])
     const [dataRelate, setDataRelate] = React.useState([])
-
+    const [idHost, setIdHost] = React.useState('')
   
 
   
@@ -92,7 +92,7 @@ const detailCar = ({navigation,route})=> {
             setDataDetailCar(a)
             getDataReview(res.data[0].idUser)
             relateCar(address, _id)
-            getIdToken(res.data[0].idUser)
+            setIdHost(res.data[0].idUser)
         })
        
         
@@ -158,6 +158,10 @@ const detailCar = ({navigation,route})=> {
                 ((Number(k.price) + (Number(route.params.km?route.params.km:0) * Number(10000)) - Number(route.params.data?route.params.data:0)) * Number(route.params.n?route.params.n:''))   
     
             ))
+           const ps =  dataDetailCar.map((tt)=>(
+                (Number(tt.price) + (Number(route.params.km?route.params.km:0) * Number(10000)) - Number(route.params.data?route.params.data:0)) * Number(route.params.n?route.params.n:'')  - (Number(tt.price) + (Number(route.params.km?route.params.km:0) * Number(10000))
+                - Number(route.params.data?route.params.data:0)) * Number(route.params.n?route.params.n:'') *Number(0.3)
+            ));
             // console.log(p);
             
             const i = dataDetailCar.map((id)=>(id.idUser))
@@ -182,7 +186,8 @@ const detailCar = ({navigation,route})=> {
                 resp : 0,
                 fee : j,
                 location: route.params.locationUser,
-                dateCurr : date + '/' + month + '/' + year
+                dateCurr : date + '/' + month + '/' + year,
+                prices : ps
     
             }
             // console.log(respone);
@@ -265,13 +270,12 @@ const detailCar = ({navigation,route})=> {
         })
       
     }
-    const getIdToken =  async (id) => {
-        // console.log(id);
+    const getIdToken =  async () => {
+        const id = idHost 
         await axios.post(`${host}/getToken`, {id})
         .then(dt=>{
             
-            // setDataToken(dt.data.tokenDevices)
-            // console.log(dt.data.tokenDevices);
+           console.log(dt.data.tokenDevices);
             for(var i of dt.data.tokenDevices){
                 sendPushNotification(i.value)
             }
@@ -476,7 +480,7 @@ const detailCar = ({navigation,route})=> {
 
           </View>
             
-          <View style={{marginTop:5,height:280,width:"100%", backgroundColor:'white'}}>
+          <View style={{marginTop:5,height:290,width:"100%", backgroundColor:'white'}}>
 
               <Text style={{fontSize:12,fontWeight:'bold', marginVertical:10,paddingHorizontal:10}}>CHI TIẾT GIÁ</Text>
               <View style={{flexDirection:'row'  , width: 500}}>
@@ -541,20 +545,35 @@ const detailCar = ({navigation,route})=> {
                         <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 10, borderColor: '#e8eaef'}}></View>
             </View>
             <View style={{flexDirection:'row'}}>
-                        <Text style={{fontSize:12,paddingHorizontal:10,width:200,fontWeight:'bold'}}>Tổng cộng</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,width:200}}>Trả trước</Text>
                         {
                             dataDetailCar.map((k)=>(
-                                <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:150,fontWeight:'bold'}}>
-                                {((Number(k.price) + (Number(route.params.km?route.params.km:0) * Number(10000)) - Number(route.params.data?route.params.data:0)) * Number(route.params.n?route.params.n:'') ).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}    
+                                <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:150}}>
+                                {((Number(k.price) + (Number(route.params.km?route.params.km:0) * Number(10000)) - Number(route.params.data?route.params.data:0)) * Number(route.params.n?route.params.n:'') *Number(0.3) ).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}    
                                     
                                 đ</Text>
                
                             ))
                         }
-                       
-                    </View>
+                         
+            </View>
+            
+            <View style={{flexDirection:'row'}}>
+                        <Text style={{fontSize:12,paddingHorizontal:10,width:200,fontWeight:'bold',marginTop:10}}>Còn lại</Text>
+                        {
+                            dataDetailCar.map((k)=>(
+                                <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:150,fontWeight:'bold',marginTop:10}}>
+                                {((Number(k.price) + (Number(route.params.km?route.params.km:0) * Number(10000)) - Number(route.params.data?route.params.data:0)) * Number(route.params.n?route.params.n:'')  - (Number(k.price) + (Number(route.params.km?route.params.km:0) * Number(10000)) - Number(route.params.data?route.params.data:0)) * Number(route.params.n?route.params.n:'') *Number(0.3)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}    
+                                    
+                                đ</Text>
+               
+                            ))
+                        }
+                         
+            </View>
 
           </View>
+         
          <View style={{marginTop:5,height:350,width:"100%", backgroundColor:'white'}}>
               <Text style={{fontSize:12,fontWeight:'bold', marginVertical:10,paddingHorizontal:10}}>ĐẶC ĐIỂM</Text>
               <View style={{flexDirection:'row',justifyContent:'center',marginVertical:10,marginLeft:40}}>

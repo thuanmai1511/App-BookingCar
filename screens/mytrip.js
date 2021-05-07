@@ -58,10 +58,7 @@ const myTrip = ({navigation,route})=> {
             // console.log(a);
             getData(a)
         })
-        // console.log(await Geocoder.from({
-        //     latitude : 41.89,
-        //     longitude : 12.49
-        // }));
+       
     
     }
    
@@ -71,18 +68,18 @@ const myTrip = ({navigation,route})=> {
             id: com,
             number : number
         }
-        console.log(respone);
+        // console.log(respone);
         axios.post(`${host}/Completed`,respone).then(dt=>{
             // console.log(dt.data);
             Alert.alert(
-                "Bạn chắc chắn đã nhận được xe.",
+                "Bạn đã thanh toán số tiền trả trước",
                 "",
                 [ {
-                    text: "Cancel",
+                    text: "Chưa thanh toán",
                     onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                   },
-                  { text: "OK" , onPress: () => getDataAPI()}
+                  { text: "Đã thanh toán" , onPress: () => getDataAPI()}
                 ]
               );
         })
@@ -140,22 +137,22 @@ const myTrip = ({navigation,route})=> {
                     <View style={{backgroundColor:'#fff' ,height:120}}>
                         <Text style={{fontWeight:'bold' , fontSize:12, paddingHorizontal:10 , paddingTop:10,textAlign:'center'}}>THÔNG TIN XE</Text>
                         <View style={{flexDirection:'row' ,marginTop:10}}>
-                            <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold',fontSize:12}}>Mẫu xe</Text>
-                            <Text style={{marginTop: 5}}>{it.idCar.carModel} {it.idCar.carName}</Text>
+                            <Text style={{paddingHorizontal:15 , width:120 , marginTop: 5 ,fontWeight:'bold',fontSize:12}}>Mẫu xe</Text>
+                            <Text style={{marginTop: 5,width:220}}>{it.idCar.carModel} {it.idCar.carName}</Text>
                         </View>
                         <View style={{flexDirection:'row'}}>
-                            <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold' ,fontSize:12 }}>Năm sản xuất</Text>
-                            <Text style={{marginTop: 5}}>{it.idCar.year}</Text>
+                            <Text style={{paddingHorizontal:15 , width:120 , marginTop: 5 ,fontWeight:'bold' ,fontSize:12 }}>Năm sản xuất</Text>
+                            <Text style={{marginTop: 5,width:220}}>{it.idCar.year}</Text>
                         </View>
 
                         <View style={{flexDirection:'row'}}>
-                            <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold' ,fontSize:12 }}>Số chỗ ngồi</Text>
-                            <Text style={{marginTop: 5}}>{it.idCar.seats} chỗ</Text>
+                            <Text style={{paddingHorizontal:15 , width:120 , marginTop: 5 ,fontWeight:'bold' ,fontSize:12 }}>Số chỗ ngồi</Text>
+                            <Text style={{marginTop: 5,width:220}}>{it.idCar.seats} chỗ</Text>
                         </View>
                        
                     </View>
 
-                    <View style={{marginTop:5,backgroundColor:'#fff' ,height:360,borderBottomLeftRadius:10,borderBottomRightRadius:10}}>
+                    <View style={{marginTop:5,backgroundColor:'#fff' ,height:400,borderBottomLeftRadius:10,borderBottomRightRadius:10}}>
                         <Text style={{fontWeight:'bold' , fontSize:12, paddingHorizontal:10 , paddingTop:10,textAlign:'center'}}>THÔNG TIN CHUYẾN</Text>
                        
                          <View style={{flexDirection:'row',marginTop:10 , justifyContent:'center',alignItems:'center'}}>
@@ -165,31 +162,35 @@ const myTrip = ({navigation,route})=> {
                     </View>
 
                     <View style={{flexDirection:'row'}}>
-                            <Text style={{paddingHorizontal:15 , width:150 , marginTop: 10 ,fontWeight:'bold' ,fontSize:12 }}>Mã chuyến</Text>
-                            <Text style={{marginTop: 5,fontWeight:'bold'}}>#{it._id.slice(0,6)}</Text>
+                            <Text style={{paddingHorizontal:15 , width:100 , marginTop: 10 ,fontWeight:'bold' ,fontSize:12}}>Mã chuyến</Text>
+                            <Text style={{marginTop: 10,fontWeight:'bold',textAlign:'left',width:240}}>#{it._id.slice(0,6)}</Text>
                         </View>
                         <View style={{flexDirection:'row'}}>
-                            <Text style={{paddingHorizontal:15 , width:150 , marginTop: 10 ,fontWeight:'bold' ,fontSize:12 }}>Địa chỉ</Text>
+                            <Text style={{paddingHorizontal:15 , width:100 , marginTop: 10 ,fontWeight:'bold' ,fontSize:12 }}>Địa chỉ</Text>
                             {/* <Text style={{marginTop: 5,width:180}}>{it.idCar.ward} , {it.idCar.district} {it.idCar.address}</Text> */}
-                            <Text style={{marginTop: 5,width:180}}>{it.address}</Text>
+                            <Text style={{marginTop: 10,width:240,textAlign:'left'}}>{it.address}</Text>
 
                         </View>
                         <View style={{flexDirection:'row'}}>
-                            <Text style={{paddingHorizontal:15 , width:150 , marginTop: 10 ,fontWeight:'bold' ,fontSize:12 }}>Giao xe</Text>
+                            <Text style={{paddingHorizontal:15 , width:100 , marginTop: 10 ,fontWeight:'bold' ,fontSize:12 }}>Giao xe</Text>
                             
                              {
-                                it.feeExpress != 0 ? <Text  style={{marginTop: 5}}>Có hỗ trợ giao xe</Text> : <Text  style={{marginTop: 5}}>Không hỗ trợ</Text>
+                                it.feeExpress != 0 ? <Text  style={{marginTop: 10,textAlign:'left',width:240}}>Có hỗ trợ giao xe</Text> : <Text  style={{marginTop:10,textAlign:'left',width:240}}>Không hỗ trợ</Text>
                              }
                         </View>
                         <View style={{flexDirection:'row'}}>
-                            <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold' ,fontSize:12 }}>Tổng cộng</Text>
-                            <Text style={{fontWeight:'bold',marginTop: 5}}>{(Number(it.price)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
+                            <Text style={{paddingHorizontal:15 , width:100 , marginTop: 10 ,fontWeight:'bold' ,fontSize:12 }}>Trả trước</Text>
+                            <Text style={{marginTop: 10,textAlign:'left',width:240}}>{(Number(it.price) - Number(it.moneyPaid)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
                         </View>
                         <View style={{flexDirection:'row'}}>
-                            <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold' ,fontSize:12 }}>Trạng thái</Text>
+                            <Text style={{paddingHorizontal:15 , width:100 , marginTop: 10 ,fontWeight:'bold' ,fontSize:12 }}>Còn lại</Text>
+                            <Text style={{fontWeight:'bold',marginTop: 10,textAlign:'left',width:240}}>{(Number(it.moneyPaid)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
+                        </View>
+                        <View style={{flexDirection:'row'}}>
+                            <Text style={{paddingHorizontal:15 , width:100 , marginTop: 10 ,fontWeight:'bold' ,fontSize:12 }}>Trạng thái</Text>
                           
                             {
-                                it.status == 1 ? <Text style={{marginTop: 5,color:'#00a550'}}>Đã được xác nhận</Text> : <Text style={{marginTop: 5,color:'red'}}>Chưa xác nhận</Text>
+                                it.status == 1 ? <Text style={{marginTop: 10,color:'#00a550',textAlign:'left',width:240}}>Đã được xác nhận</Text> : <Text style={{marginTop: 10,color:'red',textAlign:'left',width:240}}>Chưa xác nhận</Text>
                             }
                         </View>
                         
@@ -199,13 +200,13 @@ const myTrip = ({navigation,route})=> {
                    
 
                         <View style={{flexDirection:'row',marginTop:5}}>
-                            <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold',fontSize:12 }}>Tên chủ xe</Text>
-                            <Text style={{marginTop: 5}}>{it.idHost.name}</Text>
+                            <Text style={{paddingHorizontal:15 , width:100 , marginTop: 5 ,fontWeight:'bold',fontSize:12 }}>Tên chủ xe</Text>
+                            <Text style={{marginTop: 5,width:240}}>{it.idHost.name}</Text>
                         </View>
                         
                         <View style={{flexDirection:'row',marginTop:5}}>
-                            <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold',fontSize:12 }}>Liên lạc</Text>
-                            <Text style={{marginTop: 5}}>{it.idHost.phone}</Text>
+                            <Text style={{paddingHorizontal:15 , width:100 , marginTop: 5 ,fontWeight:'bold',fontSize:12 }}>Liên lạc</Text>
+                            <Text style={{marginTop: 5,width:240}}>{it.idHost.phone}</Text>
                         </View>
                         {/* <View style={{flexDirection:'row',marginTop:5}}>
                             <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold',fontSize:12 }}>Địa chỉ</Text>
@@ -215,12 +216,12 @@ const myTrip = ({navigation,route})=> {
                         {
                             it.status == 1 ? 
                             <View style={{flexDirection:'row',marginTop:10}}>
-                                <Text style={{paddingHorizontal:15 , width:150 , marginTop: 5 ,fontWeight:'bold',fontSize:12 }}>Hoàn thành</Text>
+                                <Text style={{paddingHorizontal:15 , width:100 , marginTop: 5 ,fontWeight:'bold',fontSize:12 }}>Hoàn thành</Text>
 
                                 {
-                                    it.checkCompleted == 1 ? <Text style={{marginTop:3,fontSize:12,color:'#00a550'}}>Giao dịch đã hoàn thành</Text> 
+                                    it.checkCompleted == 1 ? <Text style={{marginTop:3,fontSize:12,color:'#00a550',width:240}}>Giao dịch đã hoàn thành</Text> 
                                     :
-                                <TouchableOpacity style={{borderWidth:1, width:170 , borderRadius:5,borderColor:'#00a550'}} onPress={()=>completed(it._id,1)}>
+                                <TouchableOpacity style={{borderWidth:1, width:170 , borderRadius:5,borderColor:'#00a550',marginTop:5}} onPress={()=>completed(it._id,1)}>
                                     <Text style={{textAlign:'center',fontSize:12,color:'#00a550'}}>Nhấn vào khi đã nhận xe</Text>
                                 </TouchableOpacity>
                             }
