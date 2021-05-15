@@ -43,7 +43,7 @@ const detailCar = ({navigation,route})=> {
     const [dataRelate, setDataRelate] = React.useState([])
     const [idHost, setIdHost] = React.useState('')
   
-
+    const [number, setNumber] = React.useState('')
   
 
     // console.log(route.params.e);
@@ -93,6 +93,7 @@ const detailCar = ({navigation,route})=> {
             getDataReview(res.data[0].idUser)
             relateCar(address, _id)
             setIdHost(res.data[0].idUser)
+            numberTrip(res.data[0]._id)
         })
        
         
@@ -155,21 +156,22 @@ const detailCar = ({navigation,route})=> {
         }else {
            
             const  p = dataDetailCar.map((k)=>(
-                ((Number(k.price) + (Number(route.params.km?route.params.km:0) * Number(10000)) - Number(route.params.data?route.params.data:0)) * Number(route.params.n?route.params.n:''))   
+                (((Number(k.price) * Number(route.params.n?route.params.n:'')) - Number(route.params.data ?route.params.data: '') - ((Number(k.price)  * Number(route.params.n?route.params.n:'')) * Number(0.1)))  + (Number(route.params.km ?route.params.km : '' )*Number(10000)))
     
             ))
-           const ps =  dataDetailCar.map((tt)=>(
-                (Number(tt.price) + (Number(route.params.km?route.params.km:0) * Number(10000)) - Number(route.params.data?route.params.data:0)) * Number(route.params.n?route.params.n:'')  - (Number(tt.price) + (Number(route.params.km?route.params.km:0) * Number(10000))
-                - Number(route.params.data?route.params.data:0)) * Number(route.params.n?route.params.n:'') *Number(0.3)
-            ));
-            // console.log(p);
+           const ps =  dataDetailCar.map((tt)=> 
+           
+           ((((Number(tt.price) * Number(route.params.n?route.params.n:'')) - Number(route.params.data ?route.params.data: '') - ((Number(tt.price)  * Number(route.params.n?route.params.n:'')) * Number(0.1)))  + (Number(route.params.km ?route.params.km : '' )*Number(10000))) * Number(0.3))
+           
+           )
+            
             
             const i = dataDetailCar.map((id)=>(id.idUser))
-            // console.log(i);
-            // await axios(`${host}/getToken`, i)
-                
+        
             const j = route.params.km ? (Number(route.params.km) * Number(10000)) : 0
 
+            const s =  dataDetailCar.map( (y)=>((Number(y.price)  * Number(route.params.n?route.params.n:'')) * Number(0.1)))
+            console.log(s);
             var date = new Date().getDate(); //Current Date
             var month = new Date().getMonth() + 1; //Current Month
             var year = new Date().getFullYear(); //Current Year
@@ -187,7 +189,8 @@ const detailCar = ({navigation,route})=> {
                 fee : j,
                 location: route.params.locationUser,
                 dateCurr : date + '/' + month + '/' + year,
-                prices : ps
+                prices : ps,
+                serviceFee : s
     
             }
             // console.log(respone);
@@ -204,9 +207,12 @@ const detailCar = ({navigation,route})=> {
                             onPress: () => console.log("Cancel Pressed"),
                             style: "cancel"
                           },
-                          { text: "OK", onPress: () => {
-                                getIdToken() , navigation.navigate('Home')  
-                            }
+                          { text: "OK", onPress:  ()  => {
+                                getIdToken()
+                                notifiIdHost()
+                                navigation.navigate('Home')  
+                                
+                                }
                             }
                         ]
                         
@@ -275,7 +281,7 @@ const detailCar = ({navigation,route})=> {
         await axios.post(`${host}/getToken`, {id})
         .then(dt=>{
             
-           console.log(dt.data.tokenDevices);
+        //    console.log(dt.data.tokenDevices);
             for(var i of dt.data.tokenDevices){
                 sendPushNotification(i.value)
             }
@@ -283,12 +289,44 @@ const detailCar = ({navigation,route})=> {
             
         })
     } 
+    const notifiIdHost = async () => {
+        const value = await AsyncStorage.getItem('id');
+        const u = dataDetailCar.map((id)=>(id.idUser))
+        // const c = dataDetailCar.map((id)=>(id._id))
+        var date = new Date().getDate(); //Current Date
+        var month = new Date().getMonth() + 1; //Current Month
+        var year = new Date().getFullYear(); //Current Year
+        var hours = new Date().getHours(); //To get the Current Hours
+        var min = new Date().getMinutes(); //To get the Current Minutes
+        
+        const notifiRes = {
+            idu : value,
+            idh : u,
+            title : "Thông Báo Đặt Xe",
+            text : "Xe đã có khách đặt. Hãy xác nhận với khách",
+            dateNoti: date + '/' + month + '/' + year,
+            time : hours + ':' + min
+            
+        } 
+        // console.log(notifiRes);
 
+         axios.post(`${host}/notificationRes`,notifiRes).then(()=>{
+           
+        })
+    }
+    const numberTrip = async (id) => {
+    //    console.log(id);
+        await axios.post(`${host}/getNumberTrip`, {id}).then((res)=>{
+            setNumber(res.data.number)
+        })
+
+    }
+ 
     React.useEffect(  ()=>{
-        detailCars() , selectedHeart() , getName()
+        detailCars() , selectedHeart() , getName() 
     },[])
 
-    // console.log(dataToken.tokenDevices);
+    // console.log(dataReview);
 
     async function sendPushNotification(expoPushToken) {
         const message = {
@@ -310,7 +348,7 @@ const detailCar = ({navigation,route})=> {
         });
       }
 
-   
+   const serviceFee = 0;
     
     return(
         
@@ -340,12 +378,6 @@ const detailCar = ({navigation,route})=> {
                         ))
                     }
                    
-                     {/* <TouchableOpacity key ={Math.random()} onPress={()=>{}}>
-                                <MaterialIcons name="favorite" size={24} color="red"/>
-                                <MaterialIcons name="favorite-border" size={24} color="white" />
-                                
-                            </TouchableOpacity>  */}
-                
             </View>
          <View style={{justifyContent:'center', alignItems:'center',marginTop: 0}}>
          {
@@ -373,7 +405,7 @@ const detailCar = ({navigation,route})=> {
                 
                 <View style={{flexDirection:'row'}}>
                      <Text style={{marginTop: 5,marginLeft: 10}}>5.0 <Ionicons name="star-outline" style={{color:'green', fontSize: 14}}></Ionicons> </Text>
-                     <Text style={{marginTop: 7,marginLeft: 10,fontSize: 12,width:165}}>22 chuyến</Text>
+                     <Text style={{marginTop: 7,marginLeft: 10,fontSize: 12,width:165}}>{number} chuyến</Text>
                      <View style={{flexDirection:'row'}}>
                      
                         {dataDetailCar.map((i)=>(
@@ -480,7 +512,7 @@ const detailCar = ({navigation,route})=> {
 
           </View>
             
-          <View style={{marginTop:5,height:290,width:"100%", backgroundColor:'white'}}>
+          <View style={{marginTop:5,height:320,width:"100%", backgroundColor:'white'}}>
 
               <Text style={{fontSize:12,fontWeight:'bold', marginVertical:10,paddingHorizontal:10}}>CHI TIẾT GIÁ</Text>
               <View style={{flexDirection:'row'  , width: 500}}>
@@ -492,25 +524,34 @@ const detailCar = ({navigation,route})=> {
                         {
                         dataDetailCar.map((t)=>(
                             
-                            <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:150}}>{Number(t.price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}/ ngày</Text>
+                            <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:150}}>{(Number(t.price)  ).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')} x {route.params.n ? route.params.n : 1 } ngày</Text>
                         ))
                     }
                        
                     </View>
                    
-                    {/* <View style={{flexDirection:'row'}}>
-                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,width:100}}>Phí dịch vụ</Text>
-                        <Text style={{fontSize:12,paddingHorizontal:10,paddingLeft:155,marginTop:10,opacity:0.5}}>{Number(servicePrice).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</Text>
-                    </View> */}
-                     
+                    <View style={{flexDirection:'row'}}>
+                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,width:200}}>Phí dịch vụ</Text>
+                        {
+                            dataDetailCar.map((k)=>(
+                                <Text key ={Math.random()} style={{fontSize:12,paddingHorizontal:10,marginTop:10,opacity:0.5,textAlign:'right',width:150}}>-
+                               { ((Number(k.price)  * Number(route.params.n?route.params.n:'')) * Number(0.1)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}   
+                                    
+                                đ</Text>
+               
+                            ))}
+                    </View>
+
+                    <View style={{flexDirection:'row'}}>
+                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,width:200}}>Giảm giá</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,opacity:0.5,textAlign:'right',width:150}}>-{route.params.data ? Number(route.params.data).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,'): '0.0'}đ</Text>
+                    </View>
+
                     <View style={{flexDirection:'row'}}>
                         <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,width:200}}>Phí giao xe</Text>
-                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,opacity:0.5,textAlign:'right',width:150}}> {route.params.km ? (Number(route.params.km) * Number(10000)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') : '0'}đ</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,opacity:0.5,textAlign:'right',width:150}}> {route.params.km ? (Number(route.params.km) * Number(10000)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,') : '0'}đ</Text>
                     </View>
-                     <View style={{flexDirection:'row'}}>
-                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,width:200}}>Giảm giá</Text>
-                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,opacity:0.5,textAlign:'right',width:150}}>-{route.params.data ? Number(route.params.data).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'): '0.00'}</Text>
-                    </View>
+                   
                     
                 </View>
                 
@@ -520,10 +561,10 @@ const detailCar = ({navigation,route})=> {
                         <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 10, borderColor: '#e8eaef'}}></View>
             </View>
             <View style={{flexDirection:'row'}}>
-                        <Text style={{fontSize:12,paddingHorizontal:10,width:200}}>Tổng phí thuê xe</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,width:200}}>Tổng cộng</Text>
                         {
                             dataDetailCar.map((l)=>(
-                                <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:150}}>{(Number(l.price) + (Number(route.params.km?route.params.km:0) * Number(10000)) - Number(route.params.data?route.params.data:0)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} x {route.params.n ? route.params.n : 1 } ngày</Text>
+                                <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:150}}>{(((Number(l.price) * Number(route.params.n?route.params.n:'')) - Number(route.params.data ?route.params.data: '') - ((Number(l.price)  * Number(route.params.n?route.params.n:'')) * Number(0.1)))  + (Number(route.params.km ?route.params.km : '' )*Number(10000))).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
                             ))
                         }
                       
@@ -544,12 +585,13 @@ const detailCar = ({navigation,route})=> {
             <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
                         <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 10, borderColor: '#e8eaef'}}></View>
             </View>
+           
             <View style={{flexDirection:'row'}}>
                         <Text style={{fontSize:12,paddingHorizontal:10,width:200}}>Trả trước</Text>
                         {
                             dataDetailCar.map((k)=>(
                                 <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:150}}>
-                                {((Number(k.price) + (Number(route.params.km?route.params.km:0) * Number(10000)) - Number(route.params.data?route.params.data:0)) * Number(route.params.n?route.params.n:'') *Number(0.3) ).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}    
+                                {((((Number(k.price) * Number(route.params.n?route.params.n:'')) - Number(route.params.data ?route.params.data: '') - ((Number(k.price)  * Number(route.params.n?route.params.n:'')) * Number(0.1)))  + (Number(route.params.km ?route.params.km : '' )*Number(10000))) * Number(0.3)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}    
                                     
                                 đ</Text>
                
@@ -563,7 +605,7 @@ const detailCar = ({navigation,route})=> {
                         {
                             dataDetailCar.map((k)=>(
                                 <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:150,fontWeight:'bold',marginTop:10}}>
-                                {((Number(k.price) + (Number(route.params.km?route.params.km:0) * Number(10000)) - Number(route.params.data?route.params.data:0)) * Number(route.params.n?route.params.n:'')  - (Number(k.price) + (Number(route.params.km?route.params.km:0) * Number(10000)) - Number(route.params.data?route.params.data:0)) * Number(route.params.n?route.params.n:'') *Number(0.3)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}    
+                                {((((Number(k.price) * Number(route.params.n?route.params.n:'')) - Number(route.params.data ?route.params.data: '') - ((Number(k.price)  * Number(route.params.n?route.params.n:'')) * Number(0.1)))  + (Number(route.params.km ?route.params.km : '' )*Number(10000))) - ((((Number(k.price) * Number(route.params.n?route.params.n:'')) - Number(route.params.data ?route.params.data: '') - ((Number(k.price)  * Number(route.params.n?route.params.n:'')) * Number(0.1)))  + (Number(route.params.km ?route.params.km : '' )*Number(10000))) * Number(0.3))).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}    
                                     
                                 đ</Text>
                
@@ -716,34 +758,31 @@ const detailCar = ({navigation,route})=> {
                
           </View>
           
-          <View style={{marginTop:5,height:300,width:"100%", backgroundColor:'white'}}>
+          <View style={{marginTop:5,height:200,width:"100%", backgroundColor:'white'}}>
             
               <View style={{flexDirection:'row'}}>
                 <Text style={{fontSize:12,fontWeight:'bold', marginVertical:10,paddingHorizontal:10,width:200}}>ĐÁNH GIÁ </Text>
                  <Text style={{fontSize:12,paddingHorizontal:10, marginVertical:10,width:150,textAlign:'right'}}>{dataReview.length} nhận xét</Text>
               </View>
-            
-            
-            {
-                dataReview.map((dt,index)=>(
-                    <View key={index}>
-                        <View style={{flexDirection:'row',paddingHorizontal:10}}>
-                        <View style={{flexDirection:'row'}}>
-                            <Text style={{fontSize:12, left: 270}}>{dataReview.date}</Text>
-                    
-                        </View>
-                            
                         
-                    </View>
+
+                
+                    <View >
+                        <View style={{flexDirection:'row',paddingHorizontal:10}}>   
+            </View>
                     
-                    <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
-                                <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
-                        </View>
-                        <View style={{flexDirection:'row'}}>
-                                <View style={{paddingHorizontal: 10}}>
+                    
+                        {   dataReview[0] ? 
+                        <View>
+                            <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
+                                    <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
+                                </View>
+                            <View style={{flexDirection:'row'}}>
+                                
+                            <View style={{paddingHorizontal: 10}}>
                                     
                                     <Avatar.Image
-                                    source={{uri: host+"/"+dt?.idRating.images}}
+                                    source={{uri: host+"/"+dataReview[0]?.idRating.images}}
                                     size={50}
                                     />
                                     
@@ -751,30 +790,30 @@ const detailCar = ({navigation,route})=> {
                                 </View>
                                 <View style={{flexDirection:'column'}}>
                                     <View style={{flexDirection:'row'}}>
-                                        <Text style={{fontSize: 14 , fontWeight:'bold', paddingHorizontal: 5,width:220}}>{dt?.idRating.name}</Text>
-                                        <Text style={{fontSize:12 ,textAlign:'right'}}>{dt.date}</Text>
+                                        <Text style={{fontSize: 14 , fontWeight:'bold', paddingHorizontal: 5,width:220}}>{dataReview[0]?.idRating?.name}</Text>
+                                        <Text style={{fontSize:12 ,textAlign:'right'}}>{dataReview[0]?.date}</Text>
                                     </View>
                                     
                                   
                                         {
-                                            dt.rating == 1 ?<FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/> : <View></View>
+                                            dataReview[0]?.rating == 1 ?<FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/> : <View></View>
                                         }
                                         {
-                                            dt.rating == 2 ? <View style={{flexDirection:'row',marginLeft:5}}>
+                                            dataReview[0]?.rating == 2 ? <View style={{flexDirection:'row',marginLeft:5}}>
                                                < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
                                               < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
                                                 </View> : <View></View>
                                         }
                                         
                                         {
-                                             dt.rating == 3 ? <View style={{flexDirection:'row',marginLeft:5}}>
+                                             dataReview[0]?.rating == 3 ? <View style={{flexDirection:'row',marginLeft:5}}>
                                              < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
                                             < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
                                             < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
                                               </View> : <View></View>
                                         }
                                          {
-                                             dt.rating == 4 ? <View style={{flexDirection:'row',marginLeft:5}}>
+                                             dataReview[0]?.rating == 4 ? <View style={{flexDirection:'row',marginLeft:5}}>
                                              < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
                                             < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
                                             < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
@@ -782,7 +821,7 @@ const detailCar = ({navigation,route})=> {
                                               </View> : <View></View>
                                         }
                                          {
-                                             dt.rating == 5 ? <View style={{flexDirection:'row',marginLeft:5}}>
+                                             dataReview[0]?.rating == 5 ? <View style={{flexDirection:'row',marginLeft:5}}>
                                              < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
                                             < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
                                             < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
@@ -792,21 +831,94 @@ const detailCar = ({navigation,route})=> {
                                         }
                                    
                                     <View style={{paddingHorizontal: 5, marginTop: 10 , width:"100%"}}>
-                                        <Text style={{fontSize:12, textAlign:'justify'}}>{dt.comment}</Text>
+                                        <Text style={{fontSize:12, textAlign:'justify'}}>{dataReview[0]?.comment}</Text>
                                     </View>
+
+                                   
                                 </View>
+                               
+                            </View>
+                            {/* <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
+                                <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
+                            </View> */}
                                 
                         </View>
+                        : <></>
+                        }
+
                         
-                    </View>
-                ))
-            }
-            
-                {/* <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
-                    <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
-                </View> */}
-        
+        {/* {
+            dataReview[1] ? 
+                        
+                <View style={{flexDirection:'row'}}>
+                        <View style={{paddingHorizontal: 10}}>
+                            
+                            <Avatar.Image
+                            source={{uri: host+"/"+dataReview[1]?.idRating.images}}
+                            size={50}
+                            />
+                            
+                        
+                        </View>
+                        <View style={{flexDirection:'column'}}>
+                            <View style={{flexDirection:'row'}}>
+                                <Text style={{fontSize: 14 , fontWeight:'bold', paddingHorizontal: 5,width:220}}>{dataReview[1]?.idRating?.name}</Text>
+                                <Text style={{fontSize:12 ,textAlign:'right'}}>{dataReview[1]?.date}</Text>
+                            </View>
+                            
+                            
+                                {
+                                    dataReview[1]?.rating == 1 ?<FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/> : <View></View>
+                                }
+                                {
+                                    dataReview[1]?.rating == 2 ? <View style={{flexDirection:'row',marginLeft:5}}>
+                                        < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                        < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                        </View> : <View></View>
+                                }
+                                
+                                {
+                                        dataReview[1]?.rating == 3 ? <View style={{flexDirection:'row',marginLeft:5}}>
+                                        < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                        </View> : <View></View>
+                                }
+                                    {
+                                        dataReview[1]?.rating == 4 ? <View style={{flexDirection:'row',marginLeft:5}}>
+                                        < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                        </View> : <View></View>
+                                }
+                                    {
+                                        dataReview[1]?.rating == 5 ? <View style={{flexDirection:'row',marginLeft:5}}>
+                                        < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
+                                        </View> : <View></View>
+                                }
+                            
+                            <View style={{paddingHorizontal: 5, marginTop: 10 , width:"100%"}}>
+                                <Text style={{fontSize:12, textAlign:'justify'}}>{dataReview[1]?.comment}</Text>
+                            </View>
+                        </View>
+                        
+                </View>
+                : <></>      } */}
+            </View>
         </View>
+        
+        <View style={{flexDirection:'row',backgroundColor:'#fff'}}>
+                <TouchableOpacity style={{marginRight:10,width:'90%'}} onPress={()=>navigation.navigate('rate2', {data : dataReview})}>
+                    <Text style={{textAlign:'right',fontSize:10,color:'#00a550',marginBottom:10}}>XEM THÊM</Text>
+                </TouchableOpacity>
+                <AntDesign name="right" size={10} color="silver" style={{textAlign:'right',marginTop:2}}/>
+                
+            </View>
         <ScrollView style={{backgroundColor:'#fff',marginTop:5}}>
             <View >
                 <Text style={{marginLeft:10,marginTop:10,fontWeight:'bold'}}>XE LIÊN QUAN</Text>

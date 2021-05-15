@@ -17,7 +17,6 @@ import axios from 'axios';
 import { AsyncStorage } from 'react-native';
 const rate  = ({navigation,route}) => {
     const { review } = route.params.data
-    
     const [ defaultRating , setdefaultRating] = useState(1)
     const [maxRating , setmaxRating] =useState([1,2,3,4,5])
     const [ ratingData , setRatingData] = useState({})
@@ -38,7 +37,7 @@ const rate  = ({navigation,route}) => {
 
     const CustomRatingBar = () => {
         return(
-            <View style={{justifyContent:'center',flexDirection:'row', backgroundColor:'#fff',marginTop:10}}>
+            <View style={{justifyContent:'center',flexDirection:'row', backgroundColor:'#fff',marginTop:30}}>
                   
                 {
                     maxRating.map((item , key)=> {
@@ -78,7 +77,7 @@ const rate  = ({navigation,route}) => {
                 "Cảm ơn bạn đã đánh giá",
                 "",
                 [
-                  { text: "OK", onPress: () => navigation.navigate("myTrip")}
+                  { text: "OK", onPress: () => navigation.navigate('Home') }
                 ]
               );
             
@@ -122,13 +121,9 @@ const rate  = ({navigation,route}) => {
 
                             <Text style={{textAlign:'center' ,marginTop:15,fontWeight:'bold',fontSize:16}}>{route.params.data.name}</Text>
 
-
-                          
-
-                            
                             {
                                 ratingData ? 
-                            <View style={{backgroundColor:'#fff',height:200,alignItems:'center',marginTop:15}}>
+                            <View style={{backgroundColor:'#fff',height:200,alignItems:'center'}}>
                                     {
                                         ratingData.rating == 1 ? <View style={{flexDirection:'row',marginLeft:5}}>
                                         <FontAwesome name="star" size={40} color="#ffa500" />
@@ -179,7 +174,7 @@ const rate  = ({navigation,route}) => {
                         </View>
 
                          :
-                            <View style={{ height :400, backgroundColor:'#fff'}}>
+                            <View style={{ height :400,justifyContent:'center',alignItems:'center'}}>
                             
                             <CustomRatingBar /> 
                              
@@ -199,15 +194,15 @@ const rate  = ({navigation,route}) => {
                                             defaultRating == 5 ? <Image source={icon5}  style={{height:50,width:50}}/> :  <View></View>
                                         } 
                                     </View>
-                                    <View style={{marginTop:5,height:150,backgroundColor:'#d6d9dc'}}>
+                                    <View style={{marginTop:5,height:150,borderWidth:1,marginTop:10,borderColor:'#d6d9dc',width:'90%'}}>
                                         <TextInput
-                                            style={{padding:5,width:200}}
+                                            style={{marginLeft:10}}
                                             onChangeText={(value)=>setValueRating(value)}
                                             value={valueRating}
                                             placeholder="Nhập phản hồi của bạn."
                                         />
                                     </View>
-                                    <View style={{justifyConten:'center',alignItems:'center',alignContent:'center',marginTop:5,backgroundColor:'#fff',height:150}}>
+                                    <View style={{justifyConten:'center',alignItems:'center',alignContent:'center',marginTop:5,backgroundColor:'#fff',height:150,borderWidth:1,borderColor:'#d6d9dc',width:'100%'}}>
                                         <TouchableOpacity style={{width:300,height:35,backgroundColor:'#00a550',marginTop:40}} onPress={handleRating}>
                                             <Text style={{textAlign:'center',paddingTop:8,fontSize:14,color:'#fff',fontWeight:'bold'}}>PHẢN HỒI</Text>
                                         </TouchableOpacity>
@@ -221,16 +216,6 @@ const rate  = ({navigation,route}) => {
                            
                             }
                             </View>
-                            
-                           
-                              
-                                       
-                                    
-                    
-                   
-                    
-                        
-                {/* </View> */}
                
             </ScrollView>
             

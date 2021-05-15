@@ -91,7 +91,7 @@ export default function DrawerContent({...props}) {
                         onPress: () => console.log("Cancel Pressed"),
                         style: "cancel"
                       },
-                      { text: "OK", onPress: () => navigation.navigate('SigninScreen')}
+                      { text: "OK", onPress: () => navigation.replace('Home')}
                     ]
                   );
               }else {
@@ -169,29 +169,14 @@ export default function DrawerContent({...props}) {
                               
                            </View>
                        </View>
-                       <View style={styles.row}>
-                            {/* <View style={styles.section}>
-                                
-                                <Paragraph style={styles.paragraph}>85</Paragraph>
-                                <Caption style={styles.caption}>Following</Caption>
-                            </View>
-                            <View style={styles.section}>
-                                
-                                <Paragraph style={styles.paragraph}>100</Paragraph>
-                                <Caption style={styles.caption}>Follower</Caption>
-                            </View> */}
-                       </View>
+
                        
                    </View>
                    <Drawer.Section style={styles.drawerSection}>
                        
                         <DrawerItem
                             icon={({color, size})=> (
-                                // <Icon
-                                //     name="home-outline"
-                                //     color={color}
-                                //     size={size}
-                                // />
+                               
                                 <Ionicons name="md-home" size={24} color="grey" />
                                 
                             )}
@@ -202,11 +187,7 @@ export default function DrawerContent({...props}) {
                         />
                          <DrawerItem
                             icon={({color, size})=> (
-                                // <Icon
-                                //     name="account-outline"
-                                //     color={color}
-                                //     size={size}
-                                // />
+                              
                                 <FontAwesome name="user-circle" size={24} color="grey" />
                                 
                             )}
@@ -293,6 +274,22 @@ export default function DrawerContent({...props}) {
                                 // console.log(value);
                                 if(value) {
                                     navigation.navigate("favorite",{id: value})
+                                } else {
+                                    navigation.navigate("SigninScreen")
+                                }
+                            }}
+                            />
+                            <DrawerItem
+                            icon={({color, size})=> (
+                                <Ionicons name="notifications-outline" size={25} color="grey" />
+                                
+                            )}
+                            label="Thông báo"
+                            onPress= { async()=> {
+                                const value = await AsyncStorage.getItem('id');
+                                // console.log(value);
+                                if(value) {
+                                    navigation.navigate("notification",{id: value})
                                 } else {
                                     navigation.navigate("SigninScreen")
                                 }

@@ -19,13 +19,17 @@ import detailCar from './screens/detailCar';
 import discount from './screens/discount';
 import DrawerCustom from './screens/drawer'
 import myCar from './screens/mycar';
+import detailMyCar from './screens/detailMyCar';
 import favorites from './screens/favorite'
 import map from './screens/map'
 import calendarScreen from './screens/calendarSave';
 import myTrip from './screens/mytrip';
+import detailMyTrip from './screens/detailMyTrip';
 import historyPage from './screens/history';
 import rate from './screens/rate';
+import rate2 from './screens/rate2';
 import maps from './screens/maps';
+import notification from './screens/notification';
 
 
 const Stack = createStackNavigator();
@@ -68,13 +72,17 @@ export default function App() {
           <Stack.Screen name="detailCar" component={detailCar} />
           <Stack.Screen name="discount" component={discount} />
           <Stack.Screen name="myCar" component={myCar} />
+          <Stack.Screen name="detailMyCar" component={detailMyCar} />
           <Stack.Screen name="favorite" component={favorites} />
           <Stack.Screen name="map" component={map} />
           <Stack.Screen name="maps" component={maps} />
           <Stack.Screen name="calendarSave" component={calendarScreen} />
           <Stack.Screen name="myTrip" component={myTrip} />
+          <Stack.Screen name="detailMyTrip" component={detailMyTrip} />
           <Stack.Screen name="history" component={historyPage} />
           <Stack.Screen name="rate" component={rate} />
+          <Stack.Screen name="rate2" component={rate2} />
+          <Stack.Screen name="notification" component={notification} />
         </Stack.Navigator>
         
       </NavigationContainer>

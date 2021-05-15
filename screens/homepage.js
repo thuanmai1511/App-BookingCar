@@ -46,13 +46,22 @@ const [city, setcity] = useState([
     },
 ]);
     const [values , setValue] = React.useState('')
-    
+    const [hostt , setHost] = React.useState('')
+
     const findId =  async () => {
         const value = await AsyncStorage.getItem('id');
         setValue(value)
         // window.location.reload(true);
     }
-    React.useEffect(()=>{findId()},[])
+
+    const authen = async () => {
+        const value = await AsyncStorage.getItem('id');
+        await axios.post(`${host}/userAuthens`, {id :value})
+        .then((res)=>{
+            setHost(res.data)
+        })
+    }
+    React.useEffect(()=>{findId() , authen()},[])
     // console.log(values);
   return (
     
@@ -81,20 +90,12 @@ const [city, setcity] = useState([
                 
                 <Button onPress={() => navigation.navigate('SigninScreen')} type="clear" icon={<Icon name="user"  size={30} color="white"/>}  /> 
             
-            </View> : <View style={styles.btnLogin}><Text style={{fontWeight:'bold', marginTop:10,color:'white',marginRight:10,fontSize:16}}>Xin Chào</Text></View>
-                }
+            </View> : <View style={styles.btnLogin}><Text style={{fontWeight:'bold', marginTop:10,color:'white',marginRight:10,fontSize:16}}>
                 
-            
-            
-            {/* <View>
-                <TextInput
-                style={styles.searchBox}
-                placeholder=' Tìm kiếm...'
-                placeholderTextColor="#666"></TextInput>
-                <Feather name= 'search' size={20} color='#666' style={{position: 'absolute', top: 170, right: 25, opacity: 0.6}}/>
-            </View> */}
-            
-        {/* </ImageBackground> */}
+                {hostt == '' ? "Người dùng" : "Chủ xe"}
+                </Text></View>
+                }
+           
         
 
       </View>

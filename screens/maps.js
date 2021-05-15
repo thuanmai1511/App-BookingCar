@@ -83,7 +83,7 @@ const maps= ({navigation,route})=> {
             
             >
               
-                <Image source={imgCar} style={{}}/>
+                <Image source={man} style={{}}/>
             </Marker> : null
             }
             {/* {

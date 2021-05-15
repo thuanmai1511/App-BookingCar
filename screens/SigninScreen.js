@@ -96,7 +96,7 @@ const SigninScreen = ({navigation}) =>{
                 // storeToken(res.data.token);
 
                 Alert.alert("Đăng nhập thành công")
-                navigation.navigate("Home")
+                navigation.replace("Home")
                   }else {
                 Alert.alert("Sai tài khoản hoặc mật khẩu")
             }
@@ -165,19 +165,19 @@ const SigninScreen = ({navigation}) =>{
     return(
         <View style={{backgroundColor: '#fff', height:"100%"}}>
             <StatusBar  backgroundColor="#fff" barStyle="light-content"/>
-            <View style={{alignItems:'center', justifyContent:'center'}}>
+            <View style={{justifyContent:'center', alignItems:'center',marginTop:50}}>
                 <Image
 
               source={{uri:"https://media.istockphoto.com/vectors/car-showroom-purchase-sale-or-rental-car-seller-man-vector-id624288380?b=1&k=6&m=624288380&s=612x612&w=0&h=_kilpQSXz24DZcXAubQ9gIySeJ7b7phaqtCTZ05yxpw="}}
-              style={{width:"100%", height: "50%"}}
+              style={{width:"90%", height: "50%"}}
                 >
               </Image>  
             </View>
              
             
            
-            <Text style={{fontSize: 30, alignSelf:'center',color:"#00716F"}}>
-             Đăng nhập
+            <Text style={{fontSize: 25, alignSelf:'center',color:"#00716F",fontWeight:'bold'}}>
+             ĐĂNG NHẬP
             </Text>
             
             <View style={{flexDirection:"row", alignItems:"center",marginHorizontal: 55, borderWidth: 2,marginTop:20,paddingHorizontal:10,borderColor: '#00716F', borderRadius: 23,paddingVertical: 2 }}>

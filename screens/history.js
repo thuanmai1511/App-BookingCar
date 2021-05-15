@@ -80,7 +80,7 @@ dataNew.map((item, index)=>(
             <View style={{flexDirection:'row'}}>
                 <Text style={{marginLeft:10, marginTop:10,fontWeight:'bold'}}>Đặt xe </Text>
                 <Text style={{marginTop:10,color:'grey',width:210,marginLeft:5}}>#{item._id.slice(0,6)}</Text>
-                <Text style={{marginTop:10,color:'grey'}}>{item.currDate}</Text>
+                <Text style={{marginTop:10,color:'grey',marginRight:10}}>{item.currDate}</Text>
             </View>
             <View style={{flexDirection:'row',marginTop:10, width:"55%", marginLeft:5}}>
             
@@ -91,7 +91,7 @@ dataNew.map((item, index)=>(
             />
             <View style={{flexDirection:'column'}}>
                 <Text style={{marginTop:10,marginLeft:5}}>{item.idCar.carModel} {item.idCar.carName}</Text>
-                <Text style={{marginTop:10,marginLeft:5}}>{item.idCar.district} {item.idCar.address}</Text>
+                <Text style={{marginTop:10,marginLeft:5}}>{item.idHost.name}</Text>
             
                 <Text style={{marginTop:10,marginLeft:5,fontWeight:'bold'}}>{(Number(item.price)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
             </View>
@@ -124,7 +124,7 @@ dataNew.map((item, index)=>(
                 
                 <View style={{backgroundColor:'white' ,height: Dimensions.get("screen").height }}> 
                 <View style={{justifyContent:'center',alignItems:'center',marginTop:100}}>
-                        <Text style={{fontSize:12,color:"#73777b"}}>Hiện tại bạn không có chuyến nào.</Text>
+                        <Text style={{fontSize:12,color:"#73777b"}}>Lịch sử trống.</Text>
                 </View>
                 <View style={{justifyContent:'center',alignItems:'center',marginTop:20,backgroundColor:'#fff'}}>
                     

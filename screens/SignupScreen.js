@@ -103,11 +103,11 @@ const SigninScreen = ({navigation}) =>{
     return(
         <View style={{backgroundColor: '#fff', height:"100%"}}>
             <StatusBar  backgroundColor="#fff" barStyle="light-content"/>
-            <View style={{alignItems:'center', justifyContent:'center'}}>
+            <View style={{alignItems:'center', justifyContent:'center',marginTop:5}}>
                 <Image
 
               source={{uri:"https://media.istockphoto.com/vectors/car-showroom-purchase-sale-or-rental-car-seller-man-vector-id624288380?b=1&k=6&m=624288380&s=612x612&w=0&h=_kilpQSXz24DZcXAubQ9gIySeJ7b7phaqtCTZ05yxpw="}}
-              style={{width:"100%", height: "50%"}}
+              style={{width:"90%", height: "50%"}}
                 >
               </Image>  
             </View>
@@ -180,7 +180,7 @@ const SigninScreen = ({navigation}) =>{
                     <Text style={{color: '#dc3545' , fontSize: 12, right: 30, textAlign:'center'}}>Mật khẩu không được để trống</Text>
                 </Animatable.View>
             }
-            <View style={{marginHorizontal: 55, alignItems: 'center', justifyContent: 'center', marginTop: 30, backgroundColor: "#00716F", paddingVertical: 8, borderRadius: 23}}>
+            <View style={{marginHorizontal: 55, alignItems: 'center', justifyContent: 'center', marginTop: 20, backgroundColor: "#00716F", paddingVertical: 8, borderRadius: 23}}>
             <TouchableOpacity
                     onPress={(signup)} >
                 <Text style={{color: 'white', fontWeight: 'bold'}}>Đăng kí</Text> 

@@ -46,8 +46,7 @@ const postCar = ({navigation,route})=> {
     const detailCar = async (id) => {
         const ids = id;
         navigation.navigate("detailCar",{ids})
-     
-        
+       
     }
     const getDataCarType = async () => {
         const value = await AsyncStorage.getItem('id');
