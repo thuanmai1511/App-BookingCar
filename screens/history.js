@@ -69,56 +69,49 @@ const historyPage = ({navigation,route})=> {
             </View>
             {
                 dataNew.length ?  <View style={{justifyContent:'center', alignItems:'center'}}>
- {
-
-dataNew.map((item, index)=>(
-    
-<View key={index}>
-   
-        <View style={{justifyContent:'center' , alignItems:'center',marginTop:20,width:'90%'}}>
-            <View style={{ height:190 , width:"95%",borderRadius:10,backgroundColor:"#fff"}}> 
-            <View style={{flexDirection:'row'}}>
-                <Text style={{marginLeft:10, marginTop:10,fontWeight:'bold'}}>Đặt xe </Text>
-                <Text style={{marginTop:10,color:'grey',width:210,marginLeft:5}}>#{item._id.slice(0,6)}</Text>
-                <Text style={{marginTop:10,color:'grey',marginRight:10}}>{item.currDate}</Text>
-            </View>
-            <View style={{flexDirection:'row',marginTop:10, width:"55%", marginLeft:5}}>
-            
-            <Image
-            source={{uri: host + '/' +item.idCar.imagesCar}}
-            style={{width: 180, height: 100,borderRadius:10}}
-            
-            />
-            <View style={{flexDirection:'column'}}>
-                <Text style={{marginTop:10,marginLeft:5}}>{item.idCar.carModel} {item.idCar.carName}</Text>
-                <Text style={{marginTop:10,marginLeft:5}}>{item.idHost.name}</Text>
-            
-                <Text style={{marginTop:10,marginLeft:5,fontWeight:'bold'}}>{(Number(item.price)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
-            </View>
-            
-        </View>
-        <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 5 }}>
-            <View style={{width: "90%",borderBottomWidth: 1 ,marginTop:2, borderColor: '#e8eaef'}}></View>
-        </View>
-        <View style={{flexDirection:'row',height:50,marginTop:5}}>
             {
-                item.checkCompleted == 1 ? <Text style={{marginLeft:15 , fontWeight:'bold',color:'#00a550',width:240}}>Hoàn thành</Text> : ''
-            }
-            
-            <TouchableOpacity style={{borderWidth:1,borderRadius:10,height:25,width:70,borderColor:'#e8eaef'}} onPress={()=>navigation.navigate("rate",{data: item.idHost})}>
-                <Text style={{fontSize:12,fontWeight:'bold',textAlign:'center',paddingTop:2}}>Đánh giá</Text>
-            </TouchableOpacity>
-            
-        </View>
-</View> 
 
-</View>
-
-
-    </View>
-))
-}
+            dataNew.map((item, index)=>(
+            <TouchableOpacity key={index} style={{}}>
+                <View style={{backgroundColor:'#fff', width: '100%', height: 80 ,justifyContent:'center',alignItems:'center'}}>
+                    
+                    <View style={{flexDirection:'row', justifyContent:'center',alignItems:'center'}}>
+                        <Avatar.Image
+                            source={{uri: host + "/" +item.idCar.imagesCar}}
+                            size={50}
+                        />
+                        <View>
+                            <View style={{flexDirection:'row'}}>
+                                <View style={{flexDirection:'column'}}>
+                                    <Text style={{width:200,marginLeft:5}}>Đặt xe {item.idCar.carModel} {item.idCar.carName} #{item._id.slice(0,6)}</Text>
+                                    
+                                    <Text style={{marginLeft:5,fontSize:12,marginTop: 5,color:'#86929e'}}>{item.currDate}</Text>
+                                       
+                                   
+                                </View>
+                                <View style={{flexDirection:'column' , justifyContent:'center',alignItems:'center'}}>
+                                    <Text style={{width:100,fontWeight:'bold'}}>-{Number(item.price).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
+                                    <TouchableOpacity onPress={()=>navigation.navigate("rate",{data: item.idHost})} style={{borderColor: '#00a550',borderRadius:5,width: 50 , height: 25,borderWidth:1, marginTop: 5,justifyContent:'center',alignItems:'center'}}>
+                                            <Text style={{fontSize:10,color:'#00a550'}}>Đánh giá</Text>
+                                    </TouchableOpacity>
+                                   
+                                </View>
+                                
+                            </View>
+                            
+                        </View>
+                        <View style={{marginTop:100}}></View>
+                    </View>
+                   
+                
                 </View>
+                <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 5 }}>
+                    <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
+                </View>
+            </TouchableOpacity>
+            ))
+            }
+            </View>
 
                 : 
                 
