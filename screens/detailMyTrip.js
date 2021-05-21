@@ -147,7 +147,7 @@ const detailMyTrip = ({navigation,route})=> {
                        
                     </View>
 
-                    <View style={{marginTop:10,backgroundColor:'#fff' ,height:340}}>
+                    <View style={{marginTop:10,backgroundColor:'#fff' ,height:380}}>
                         <Text style={{fontWeight:'bold' , fontSize:15, paddingHorizontal:10 , paddingTop:10,textAlign:'left'}}>THÔNG TIN CHUYẾN</Text>
                        
                          <View style={{flexDirection:'row',marginTop:10 , justifyContent:'center',alignItems:'center'}}>

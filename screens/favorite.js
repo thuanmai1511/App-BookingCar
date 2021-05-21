@@ -47,6 +47,12 @@ const favorites = ({navigation,route})=> {
      
         
     }
+    const reloadPage = async () => {
+        // window.location.reload(false);
+        getFavoriteCars()
+        // navigation.replace("notification"\)
+    }
+
 //    console.log(data);
     React.useEffect(()=>{getFavoriteCars()},[])
 
@@ -70,8 +76,8 @@ const favorites = ({navigation,route})=> {
                     <Text key={Math.random()} style={{color: '#fff', fontWeight:'bold',fontSize: 17, textAlign:'center' }}>XE YÊU THÍCH</Text>   
                 </View> 
                 
-                <TouchableOpacity>
-                    <Ionicons name="arrow-back" size={24} color="black" style={{opacity: 0}}/>
+                <TouchableOpacity onPress={reloadPage}>
+                    <Ionicons name="reload-outline" size={24} color="white" />
                 </TouchableOpacity>
             
          </View>

@@ -84,7 +84,7 @@ const myTrip = ({navigation,route})=> {
                 
                     
                 <View style={{justifyContent:'center', alignItems:'center',marginTop:20}}>
-                            <View style={{borderWidth:1 , width:"90%" , height: 190,borderRadius:5,borderColor:'#e8eaef',backgroundColor: '#f6f6f6'}}>
+                            <View style={{borderWidth:1 , width:"90%" , height: 220,borderRadius:5,borderColor:'#e8eaef',backgroundColor: '#f6f6f6'}}>
 
                                 <View style={{flexDirection:'column'}}>
                                     <View style={{justifyContent: 'center' , alignItems:"center"}}>
@@ -113,6 +113,10 @@ const myTrip = ({navigation,route})=> {
                                     <View style={{flexDirection:'row'}}>
                                         <Text style={{paddingHorizontal:15 , color:'#86929e' ,width:100,marginTop:5,fontSize:12}}>Chủ xe</Text>
                                         <Text style={{marginTop:5,width:200,textAlign:'right'}}>{it.idHost.name}</Text>
+                                    </View>
+                                    <View style={{flexDirection:'row'}}>
+                                        <Text style={{paddingHorizontal:15 , color:'#86929e' ,width:100,marginTop:5,fontSize:12}}>Ngày</Text>
+                                        <Text style={{marginTop:5,width:200,textAlign:'right'}}>{it.currDate}</Text>
                                     </View>
                                     <View style={{flexDirection:'row'}}>
                                         <Text style={{paddingHorizontal:15 , width:100 , marginTop: 5 ,color:'#86929e' ,fontSize:12}}>Trạng thái</Text>
