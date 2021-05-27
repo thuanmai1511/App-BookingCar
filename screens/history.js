@@ -47,7 +47,7 @@ const historyPage = ({navigation,route})=> {
     
     return(
         
-        <View style={{  backgroundColor: '#d6d9dc',height:"100%"}}>
+        <View style={{  backgroundColor: '#fff',height:"100%"}}>
        
        <ScrollView> 
             <View style={{ flexDirection: 'row', backgroundColor:'black', alignItems:"center", marginTop: 30, padding: 20}}>
@@ -73,7 +73,7 @@ const historyPage = ({navigation,route})=> {
 
             dataNew.map((item, index)=>(
             <TouchableOpacity key={index} style={{}}>
-                <View style={{backgroundColor:'#fff', width: '100%', height: 80 ,justifyContent:'center',alignItems:'center'}}>
+                <View style={{backgroundColor:'#e1f5fe', width: '100%', height: 80 ,justifyContent:'center',alignItems:'center'}}>
                     
                     <View style={{flexDirection:'row', justifyContent:'center',alignItems:'center'}}>
                         <Avatar.Image

@@ -29,7 +29,7 @@ import { Octicons } from '@expo/vector-icons';
 import Geocoder from 'react-native-geocoding';
 
 const postCar = ({navigation,route})=> {
-    Geocoder.init("AIzaSyBHRMxpBKc25CMHY51h1jrnCCm6PjNs62s");
+    // Geocoder.init("AIzaSyBLnQ6KLSCfkgMFDgbw1_jMzlo4fhXILss");
     const [dataCar , setDataCar] = React.useState([])
     const [modalVisible, setModalVisible] = React.useState(false);
     const [modalVisibles, setModalVisibles] = React.useState(false);
@@ -56,20 +56,9 @@ const postCar = ({navigation,route})=> {
         await axios.get(`${host}/getDetailCar/type=`+title).then((res)=>{
             // console.log(res.data);
             res.data.map(async(val)=>{
-                let a = []
-                for (var b of res.data){
-                const {latitude, longitude} =b.location.coords
-                const gg = await Geocoder.from({
-                    latitude,
-                    longitude
-                });
-
-                b['address'] = gg.results[0].formatted_address
-                a.push(b)
-            }
-            
+          
                 if(val.status == true && val.idUser != value){
-                    setDataCar(a)
+                    setDataCar(res.data)
                     setDataFilterSeat(previous=>[...previous, val])
                     setDataFilterModel(previous=>[...previous, val])
                     setDataFilter(previous=>[...previous, val])
@@ -77,9 +66,10 @@ const postCar = ({navigation,route})=> {
     
                 }              
            })
+        // setDataCar(res.data)
         })
     }
-// console.log(dataCar);
+
     const carFilter = (seat) => {
         const filterCar = dataFilterSeat.filter(dt=>{
            return dt.seats == seat
@@ -216,7 +206,7 @@ elevation: 7,}}>
                 </View>
                 <View style={{flexDirection:'row'}}>
                     <Text style={{marginTop: 10,marginLeft: 10}}><Ionicons name="location-outline" style={{ fontSize: 14}}></Ionicons></Text>
-                    <Text style={{marginTop: 9,marginLeft: 5, fontSize:12,width:'90%'}}>{item.address}</Text>
+                    <Text style={{marginTop: 9,marginLeft: 5, fontSize:12,width:'90%'}}>{item.addresss}</Text>
                 </View>
                 
             </View>

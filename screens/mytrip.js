@@ -41,7 +41,7 @@ const myTrip = ({navigation,route})=> {
     
     }
   
-   
+//    console.log(data);
     React.useEffect(()=>{getDataAPI()},[])
     return(
         
@@ -88,8 +88,8 @@ const myTrip = ({navigation,route})=> {
 
                                 <View style={{flexDirection:'column'}}>
                                     <View style={{justifyContent: 'center' , alignItems:"center"}}>
-                                        <View style={{flexDirection:'row'}}>  
-                                            <View style={{marginTop:5,width:120}}>
+                                        <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>  
+                                            <View style={{marginTop:5,width:100}}>
                                 
                                                 <Image
                                                 source={{uri: host + '/' + it.idCar.imagesCar}}
@@ -97,9 +97,12 @@ const myTrip = ({navigation,route})=> {
                                                 
                                                 />
                                             </View>
-                                            <View style={{justifyContent:'center', alignItems:'center'}}>
-                                                <TouchableOpacity onPress={()=>navigation.navigate("detailMyTrip", {id: it._id})}style={{borderWidth:1 , width:100,height:30,marginLeft:70,justifyContent:'center',alignItems:'center',borderColor:'#00a550',borderRadius:5}}>
+                                            <View style={{justifyContent:'center', alignItems:'center',flexDirection:'row'}}>
+                                                <TouchableOpacity onPress={()=>navigation.navigate("detailMyTrip", {id: it._id})}style={{borderWidth:1 , width:80,height:30,marginLeft:40,justifyContent:'center',alignItems:'center',borderColor:'#00a550',borderRadius:5}}>
                                                     <Text style={{fontSize:12 , textAlign:'center',color:'#00a550'}}>Xem chi tiết</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity onPress={()=>navigation.navigate("chat",{idH : it.idHost._id ,type: 1})} style={{borderWidth:1 , width:80,height:30,justifyContent:'center',alignItems:'center',borderColor:'#00a550',borderRadius:5,marginLeft:5}}>
+                                                    <Text style={{fontSize:12 , textAlign:'center',color:'#00a550'}}>Nhắn tin</Text>
                                                 </TouchableOpacity>
                                             </View>
                                            

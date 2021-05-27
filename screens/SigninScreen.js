@@ -39,18 +39,18 @@ const SigninScreen = ({navigation}) =>{
      const retrieveData = async () => {
         try {
           // import { AsyncStorage } from 'react-native';
-          
-          if (value !== null) {
+          const values = await AsyncStorage.getItem('id');
+          if (values !== null) {
             // We have data!!
-            console.log(value);
-            return value
+            console.log(values);
+            return values
           }
         } catch (error) {
           // Error retrieving data
           return null
         }}
         
-        // console.log("Id" , retrieveData());
+        retrieveData();
 
         const storeEmail = async (email) => {
             try {
@@ -88,7 +88,7 @@ const SigninScreen = ({navigation}) =>{
         }
         axios.post(`${host}/login`, respone)
         .then(res => {
-            // console.log(res.data.token);
+            // console.log(res.data);
             if(res.data.valid){
                 
                 storeData(res.data.id);

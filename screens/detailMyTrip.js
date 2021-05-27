@@ -25,7 +25,7 @@ import { Entypo } from '@expo/vector-icons';
 import imgCar from '../images/imgCar.jpg';
 
 const detailMyTrip = ({navigation,route})=> {
-    Geocoder.init("AIzaSyBHRMxpBKc25CMHY51h1jrnCCm6PjNs62s");
+    // Geocoder.init("AIzaSyBHRMxpBKc25CMHY51h1jrnCCm6PjNs62s");
 
     const [data , getData] = React.useState([])
     
@@ -35,25 +35,14 @@ const detailMyTrip = ({navigation,route})=> {
             let a = []
             const idDetail = route.params.id;
             await axios.post(`${host}/getDataMyTrips` , {idDetail}).then(async(dt)=>{
-                // console.log(dt.data);
-                let datas = dt.data;
-                for(var b of datas){
-                    const {latitude, longitude} =b.idCar.location.coords
                 
-                    const gg = await Geocoder.from({
-                        latitude,
-                        longitude
-                    });
-
-                    b['address'] = gg.results[0].formatted_address
-                    a.push(b)
-                }
-                getData(a)
+                getData(dt.data)
+               
             })
 
 
     }
-// console.log(data);   
+
 
     const completed = (com , number) => {
         // console.log(com , number);
@@ -78,6 +67,9 @@ const detailMyTrip = ({navigation,route})=> {
         })
         
     }
+    const reloadPage = () => {
+        getDataAPIs()
+    }
    React.useEffect(()=>{getDataAPIs()}, [])
 
     return(
@@ -97,8 +89,8 @@ const detailMyTrip = ({navigation,route})=> {
                         <Text style={{color: '#fff', fontWeight:'bold',fontSize: 17, textAlign:'center' }}>CHI TIẾT</Text>    
                     </View> 
                     
-                    <TouchableOpacity >
-                        <Ionicons name="reload-outline" size={24} color="white" style={{opacity: 0}}/>
+                    <TouchableOpacity onPress={reloadPage}>
+                        <Ionicons name="reload" size={24} color="white" />
                     </TouchableOpacity>
                 
             </View>
@@ -162,7 +154,7 @@ const detailMyTrip = ({navigation,route})=> {
                         </View>
                         <View style={{flexDirection:'row'}}>
                         <Text style={{paddingHorizontal:15 , width:100 , marginTop: 10,color:'#86929e' ,fontSize:14}}>Địa chỉ</Text>
-                            <Text style={{marginTop: 10,width:240,textAlign:'right'}}>{it.address}</Text>
+                            <Text style={{marginTop: 10,width:240,textAlign:'right'}}>{it.locationCheckOut}</Text>
 
                         </View>
                         <View style={{flexDirection:'row'}}>
@@ -211,8 +203,9 @@ const detailMyTrip = ({navigation,route})=> {
                         }
                             </View>
                         </View>
-                        
+                       
                     </View>
+                    
                 </View>
                     <View style={{marginTop:10}}></View>
 

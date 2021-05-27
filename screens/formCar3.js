@@ -102,7 +102,7 @@ const formCar3 = ({navigation, route}) =>{
 
 
         }
-        // console.log(respone4);
+        // console.log(respone4);   
 
         if(respone4.price == '' || respone4.imageCar == ''){
             Alert.alert("Hãy nhập đầy đủ thông tin")
@@ -145,7 +145,7 @@ const formCar3 = ({navigation, route}) =>{
             </View>
             <TextInput
                 style={{color:'green' , fontSize:40,borderBottomColor:'green',textAlign:'left', borderBottomWidth: 1,paddingHorizontal: 30, marginTop: 20}}
-                placeholder="1234567"
+                placeholder="800.000"
                 placeholderTextColor = "green"
                 onChangeText={(val)=>setPrice(val)}
             ></TextInput>

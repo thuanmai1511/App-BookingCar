@@ -25,32 +25,33 @@ import { Entypo } from '@expo/vector-icons';
 import imgCar from '../images/imgCar.jpg';
 
 const detailMyCar = ({navigation,route})=> {
-    Geocoder.init("AIzaSyBHRMxpBKc25CMHY51h1jrnCCm6PjNs62s");
+    // Geocoder.init("AIzaSyBHRMxpBKc25CMHY51h1jrnCCm6PjNs62s");
 
     const [data , getData] = React.useState([])
     
         const myOrders = async () => {
             await axios.post(`${host}/myOrderss`,{id: route.params.id}).then(async(res)=>{
                 // console.log(res.data);
-                getData([]);
-                res.data.map(dt=>{
-                    if(dt.locationCheckOut.length > 0) {
-                        dt.locationCheckOut.map( async (dtt)=>{
-                            var a = []
-                             const {latitude, longitude} =dtt.coords
-                            //  console.log(latitude , longitude);
-                            const gg = await Geocoder.from({latitude , longitude});
+                getData(res.data)
+                // getData([]);
+                // res.data.map(dt=>{
+                //     if(dt.locationCheckOut.length > 0) {
+                //         dt.locationCheckOut.map( async (dtt)=>{
+                //             var a = []
+                //              const {latitude, longitude} =dtt.coords
+                //             //  console.log(latitude , longitude);
+                //             const gg = await Geocoder.from({latitude , longitude});
                             
-                            getData(pre => [...pre , {...dt, location : gg.results[0].formatted_address} ])
-                          });
-                    }
-                    else {
-                        getData(pre => [...pre, dt ])
+                //             getData(pre => [...pre , {...dt, location : gg.results[0].formatted_address} ])
+                //           });
+                //     }
+                //     else {
+                //         getData(pre => [...pre, dt ])
                         
-                    }
+                //     }
                  
                   
-                  })
+                //   })
           
                 
             })
@@ -236,7 +237,7 @@ const detailMyCar = ({navigation,route})=> {
                         </View>
                         <View style={{flexDirection:'row'}}>
                         <Text style={{paddingHorizontal:15 , width:100 , marginTop: 10,color:'#86929e' ,fontSize:14}}>Địa chỉ</Text>
-                            <Text style={{marginTop: 10,width:240,textAlign:'right'}}>{it.location}</Text>
+                            <Text style={{marginTop: 10,width:240,textAlign:'right'}}>{it.locationCheckOut}</Text>
 
                         </View>
                         <View style={{flexDirection:'row'}}>

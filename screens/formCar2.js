@@ -25,9 +25,10 @@ import RNPickerSelect from 'react-native-picker-select';
 import * as ImagePicker from 'expo-image-picker';
 import Textarea from 'react-native-textarea';
 import { Feather } from '@expo/vector-icons'; 
+import Geocoder from 'react-native-geocoding';
 const formCar2 = ({navigation,route}) => {
 
-    
+    Geocoder.init("AIzaSyBLnQ6KLSCfkgMFDgbw1_jMzlo4fhXILss");
     const [selected, setSelected] = React.useState(false)
     const [selected1, setSelected1] = React.useState(false)
     const [selected2, setSelected2] = React.useState(false)
@@ -56,10 +57,11 @@ const formCar2 = ({navigation,route}) => {
             })
         
         })
+        // console.log(getAddressed);
         setListCity(isCity)
     }
 
-
+    // console.log("sadasdasdsad"+listCity);
     const handlerCity = async(val)=>{
         a = []
         setCity(val)
@@ -106,9 +108,15 @@ const formCar2 = ({navigation,route}) => {
 
 
     const postCar = async ()=>{
-        
+        const {latitude, longitude} =location.coords
+        const gg = await Geocoder.from({
+                    latitude,
+                    longitude
+                });
+        // console.log(gg.results[0].formatted_address);
+
         const respone1 = route.params.respone;
-        // console.log(respone1);
+        
         const respone2 = {
             ...respone1,
             sunroofAPI: selected,
@@ -121,11 +129,12 @@ const formCar2 = ({navigation,route}) => {
             address: getCity,
             district : getProvince,
             ward: getWard,
-            location: location
+            location: location,
+            addressCurr: gg.results[0].formatted_address
 
         }
-        
-        if( respone2.noteAPI == '' || respone2.fueledAPI == '' || respone2.address == '' || respone2.district == '' ||respone2.ward == ''|| !respone2.location ){
+            // console.log(respone2);
+        if( respone2.noteAPI == '' || respone2.fueledAPI == '' || !respone2.location ){
             Alert.alert("Hãy nhập đầy đủ thông tin")
         }else {
             navigation.navigate("formCar3", {
@@ -242,6 +251,7 @@ const formCar2 = ({navigation,route}) => {
                             let location = await Location.getCurrentPositionAsync({});
                                 // console.log(location);
                             setLocation(location);
+                            // console.log(location);
                         }
                     }} >
                             <Text style={{  textAlign:'center', fontSize:12, paddingTop: 3,color:'#00a550'}}>
@@ -250,10 +260,7 @@ const formCar2 = ({navigation,route}) => {
                             </Text>
                         </TouchableOpacity>
                     </View>
-{/*                     
-                    <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 ,borderWidth:1}}>
-                    
-                    </View> */}
+
             </View>
 
             <View style={{backgroundColor: '#fff'}}>

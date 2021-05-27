@@ -26,31 +26,32 @@ import imgCar from '../images/imgCar.jpg';
 import Geocoder from 'react-native-geocoding';
 
 const myCar = ({navigation,route})=> {
-    Geocoder.init("AIzaSyBHRMxpBKc25CMHY51h1jrnCCm6PjNs62s");
+    // Geocoder.init("AIzaSyBHRMxpBKc25CMHY51h1jrnCCm6PjNs62s");
     const [data ,setData] = React.useState([])
 //    console.log(route.params.id);
 
     const myOrder = async () => {
         await axios.post(`${host}/myOrders`,{id: route.params.id}).then(async(res)=>{
-            setData([]);
-            res.data.map(dt=>{
-                if(dt.locationCheckOut.length > 0) {
-                    dt.locationCheckOut.map( async (dtt)=>{
-                        var a = []
-                         const {latitude, longitude} =dtt.coords
-                        //  console.log(latitude , longitude);
-                        const gg = await Geocoder.from({latitude , longitude});
+            setData(res.data)
+            // setData([]);
+            // res.data.map(dt=>{
+            //     if(dt.locationCheckOut.length > 0) {
+            //         dt.locationCheckOut.map( async (dtt)=>{
+            //             var a = []
+            //              const {latitude, longitude} =dtt.coords
+            //             //  console.log(latitude , longitude);
+            //             const gg = await Geocoder.from({latitude , longitude});
                         
-                        setData(pre => [...pre , {...dt, location : gg.results[0].formatted_address} ])
-                      });
-                }
-                else {
-                    setData(pre => [...pre, dt ])
+            //             setData(pre => [...pre , {...dt, location : gg.results[0].formatted_address} ])
+            //           });
+            //     }
+            //     else {
+            //         setData(pre => [...pre, dt ])
                     
-                }
+            //     }
              
               
-              })
+            //   })
       
             
         })
@@ -84,7 +85,7 @@ const myCar = ({navigation,route})=> {
 
 
 
-    
+    console.log(data);
     return(
         
         <View style={{ flex: 1 , backgroundColor: '#efefef'}}>
@@ -133,11 +134,15 @@ const myCar = ({navigation,route})=> {
                                                 />
                                     
                                             </View>
-                                            <View style={{justifyContent:'center', alignItems:'center'}}>
-                                                <TouchableOpacity onPress={()=>navigation.navigate("detailMyCar", {id: it._id})}style={{borderWidth:1 , width:100,height:30,marginLeft:70,justifyContent:'center',alignItems:'center',borderColor:'#00a550',borderRadius:5}}>
+                                            <View style={{justifyContent:'center', alignItems:'center',flexDirection:'row'}}>
+                                                <TouchableOpacity onPress={()=>navigation.navigate("detailMyCar", {id: it._id})}style={{borderWidth:1 , width:80,height:30,justifyContent:'center',alignItems:'center',borderColor:'#00a550',borderRadius:5}}>
                                                     <Text style={{fontSize:12 , textAlign:'center',color:'#00a550'}}>Xem chi tiết</Text>
                                                 </TouchableOpacity>
+                                                <TouchableOpacity onPress={()=>navigation.navigate("chat" , {idH: it.idUserCheckOut._id, type: 0 })} style={{borderWidth:1 , width:80,height:30,justifyContent:'center',alignItems:'center',borderColor:'#00a550',borderRadius:5,marginLeft:5}}>
+                                                    <Text style={{fontSize:12 , textAlign:'center',color:'#00a550'}}>Nhắn tin</Text>
+                                                </TouchableOpacity>
                                             </View>
+                                            
                                            
                                         </View>
                                     </View>

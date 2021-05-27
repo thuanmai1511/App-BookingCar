@@ -30,7 +30,7 @@ import rate from './screens/rate';
 import rate2 from './screens/rate2';
 import maps from './screens/maps';
 import notification from './screens/notification';
-
+import Chat from './screens/chat';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -83,6 +83,7 @@ export default function App() {
           <Stack.Screen name="rate" component={rate} />
           <Stack.Screen name="rate2" component={rate2} />
           <Stack.Screen name="notification" component={notification} />
+          <Stack.Screen name="chat" component={Chat} />
         </Stack.Navigator>
         
       </NavigationContainer>

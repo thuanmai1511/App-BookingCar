@@ -25,8 +25,9 @@ import * as Location from 'expo-location';
 import { Entypo } from '@expo/vector-icons'; 
 import imgCar from '../images/car.png';
 import man from '../images/bussiness-man.png';
+import Geocoder from 'react-native-geocoding';
 const Map = ({navigation,route})=> {
-    
+    Geocoder.init("AIzaSyBLnQ6KLSCfkgMFDgbw1_jMzlo4fhXILss");
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
 
@@ -75,10 +76,14 @@ const Map = ({navigation,route})=> {
       },  []);
 
     //   console.log(location);
-    const distanceFee = (e) => {
+    const distanceFee = async (e) => {
         // console.log(e);
-        
-        e ? navigation.navigate('detailCar', {km: e, locationUser: location}) : 0
+        const {latitude, longitude} =location.coords
+        const gg = await Geocoder.from({
+                    latitude,
+                    longitude
+                });
+        e ? navigation.navigate('detailCar', {km: e, locationUser: gg.results[0].formatted_address}) : 0
         // console.log(e);
     } 
     
@@ -112,7 +117,7 @@ const Map = ({navigation,route})=> {
                     longitude: locationCar?.coords.longitude,
                     latitude: locationCar?.coords.latitude
                 }}
-                apikey="AIzaSyBHRMxpBKc25CMHY51h1jrnCCm6PjNs62s"
+                apikey="AIzaSyBLnQ6KLSCfkgMFDgbw1_jMzlo4fhXILss"
                 strokeWidth={3}
                 strokeColor="#669df6"
             />

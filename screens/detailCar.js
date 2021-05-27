@@ -31,7 +31,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useScrollToTop } from '@react-navigation/native';
 import Geocoder from 'react-native-geocoding';
 const detailCar = ({navigation,route})=> {
-    Geocoder.init("AIzaSyBHRMxpBKc25CMHY51h1jrnCCm6PjNs62s");
+    // Geocoder.init("AIzaSyBHRMxpBKc25CMHY51h1jrnCCm6PjNs62s");
     const refDetail = useRef(null)
 
    const [dataDetailCar , setDataDetailCar] = React.useState([])
@@ -72,33 +72,17 @@ const detailCar = ({navigation,route})=> {
         // console.log(idCar);
 
         await axios.get(`${host}/detailCar/`+idCar)
-        .then(async(res)=>{
-            
-            const { address, _id } = res.data[0]
-            let datas = res.data;
-            // console.log(datas);
-            let a = []
-            for (var b of datas){
-                const {latitude, longitude} =b.location.coords
-                const gg = await Geocoder.from({
-                    latitude,
-                    longitude
-                });
-
-                b['address'] = gg.results[0].formatted_address
-                a.push(b)
-            }
-            
-            setDataDetailCar(a)
+        .then(async(res)=>{     
+            // console.log(res.data);
+            setDataDetailCar(res.data)
             getDataReview(res.data[0].idUser)
-            relateCar(address, _id)
+            relateCar(res.data[0].addresss, res.data[0]._id)
             setIdHost(res.data[0].idUser)
             numberTrip(res.data[0]._id)
+           
         })
-       
-        
-            // setDataDetailCar(previous=>[...previous, val])
-                //    console.log(dataDetailCar);
+        selectedHeart() , getName() 
+
     }
     // console.log(dataDetailCar);
 
@@ -171,7 +155,7 @@ const detailCar = ({navigation,route})=> {
             const j = route.params.km ? (Number(route.params.km) * Number(10000)) : 0
 
             const s =  dataDetailCar.map( (y)=>((Number(y.price)  * Number(route.params.n?route.params.n:'')) * Number(0.1)))
-            console.log(s);
+            // console.log(s);
             var date = new Date().getDate(); //Current Date
             var month = new Date().getMonth() + 1; //Current Month
             var year = new Date().getFullYear(); //Current Year
@@ -214,7 +198,7 @@ const detailCar = ({navigation,route})=> {
                                 
                                 }
                             }
-                        ]
+                        ]   
                         
                       );    
                                 
@@ -250,24 +234,12 @@ const detailCar = ({navigation,route})=> {
     } 
 
     const naviDetailCar = async (id) => {
+        // console.log(id);
         await axios.get(`${host}/detailCar/`+id).then(async(res)=>{
 
-            let datas = res.data;
-            const { address, _id } = res.data[0]
-            let a = []
-                for (var b of datas){
-                    const {latitude, longitude} =b.location.coords
-                    const gg = await Geocoder.from({
-                        latitude,
-                        longitude
-                    });
-
-                    b['address'] = gg.results[0].formatted_address
-                    a.push(b)
-                }
-
-                setDataDetailCar(a)
-                relateCar(address, _id)
+            const { addresss, _id } = res.data[0]
+                setDataDetailCar(res.data)
+                relateCar(addresss, _id)
             })
         
         refDetail.current?.scrollTo({
@@ -323,7 +295,7 @@ const detailCar = ({navigation,route})=> {
     }
  
     React.useEffect(  ()=>{
-        detailCars() , selectedHeart() , getName() 
+        detailCars() 
     },[])
 
     // console.log(dataReview);
@@ -439,7 +411,7 @@ const detailCar = ({navigation,route})=> {
                     {
                         dataDetailCar.map((e)=>(
                             
-                            <Text key={Math.random()} style={{marginTop: 9,marginLeft: 5, fontSize:12,width:350}}>{e.address}</Text>
+                            <Text key={Math.random()} style={{marginTop: 9,marginLeft: 5, fontSize:12,width:340}}>{e.addresss}</Text>
                             
                         ))
                     }
@@ -478,7 +450,7 @@ const detailCar = ({navigation,route})=> {
                 {
                         dataDetailCar.map((r)=>(
                             
-                            <Text key={Math.random()} style={{fontSize:12,width:300}}>{r.address}</Text>
+                            <Text key={Math.random()} style={{fontSize:12,width:300}}>{r.addresss}</Text>
                             
                         ))
                     }
@@ -708,12 +680,8 @@ const detailCar = ({navigation,route})=> {
                 <View style={{flexDirection:'row',paddingHorizontal:10}}>
                     <View style={{flexDirection:'column' , width: 180}}>
                         <Text style={{paddingTop:5, fontSize:14, marginLeft:10, color:'#00a550'}}>{name ? name :  email } </Text> 
-                        {/* {
-                            dataDetailCar.map((u)=>(
-                                
-                              
-                            ))
-                        }  */}
+                    
+                      
                         <View style={{flexDirection:'row'}}>
                             <Text style={{paddingTop:5, fontSize:18, marginLeft:10}}>5.0  </Text>    
                             {/* <Ionicons size={20} color="#00a550" name="star-outline" style={{paddingTop:5}}></Ionicons> */}
@@ -838,77 +806,13 @@ const detailCar = ({navigation,route})=> {
                                 </View>
                                
                             </View>
-                            {/* <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
-                                <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
-                            </View> */}
-                                
+                           
                         </View>
                         : <></>
                         }
 
                         
-        {/* {
-            dataReview[1] ? 
-                        
-                <View style={{flexDirection:'row'}}>
-                        <View style={{paddingHorizontal: 10}}>
-                            
-                            <Avatar.Image
-                            source={{uri: host+"/"+dataReview[1]?.idRating.images}}
-                            size={50}
-                            />
-                            
-                        
-                        </View>
-                        <View style={{flexDirection:'column'}}>
-                            <View style={{flexDirection:'row'}}>
-                                <Text style={{fontSize: 14 , fontWeight:'bold', paddingHorizontal: 5,width:220}}>{dataReview[1]?.idRating?.name}</Text>
-                                <Text style={{fontSize:12 ,textAlign:'right'}}>{dataReview[1]?.date}</Text>
-                            </View>
-                            
-                            
-                                {
-                                    dataReview[1]?.rating == 1 ?<FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/> : <View></View>
-                                }
-                                {
-                                    dataReview[1]?.rating == 2 ? <View style={{flexDirection:'row',marginLeft:5}}>
-                                        < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
-                                        < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
-                                        </View> : <View></View>
-                                }
-                                
-                                {
-                                        dataReview[1]?.rating == 3 ? <View style={{flexDirection:'row',marginLeft:5}}>
-                                        < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
-                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
-                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
-                                        </View> : <View></View>
-                                }
-                                    {
-                                        dataReview[1]?.rating == 4 ? <View style={{flexDirection:'row',marginLeft:5}}>
-                                        < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
-                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
-                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
-                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
-                                        </View> : <View></View>
-                                }
-                                    {
-                                        dataReview[1]?.rating == 5 ? <View style={{flexDirection:'row',marginLeft:5}}>
-                                        < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
-                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
-                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
-                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
-                                    < FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7,marginLeft:2}}/>
-                                        </View> : <View></View>
-                                }
-                            
-                            <View style={{paddingHorizontal: 5, marginTop: 10 , width:"100%"}}>
-                                <Text style={{fontSize:12, textAlign:'justify'}}>{dataReview[1]?.comment}</Text>
-                            </View>
-                        </View>
-                        
-                </View>
-                : <></>      } */}
+        
             </View>
         </View>
         
