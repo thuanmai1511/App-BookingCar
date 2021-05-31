@@ -107,34 +107,34 @@ const detailMyTrip = ({navigation,route})=> {
                     <View style={{backgroundColor:'#fff' ,height:120}}>
                         <Text style={{fontWeight:'bold' , fontSize:15, paddingHorizontal:10 , paddingTop:10,textAlign:'left'}}>THÔNG TIN CHỦ XE</Text>
                         <View style={{flexDirection:'row' ,marginTop:10}}>
-                            <Text style={{paddingHorizontal:15 , width:120 , marginTop: 5,color:'#86929e',fontSize:14}}>Họ và tên</Text>
-                            <Text style={{marginTop: 5,width:220,textAlign:'right'}}>{it.idHost.name}</Text>
+                            <Text style={{paddingHorizontal:15 , width:"40%" , marginTop: 5,color:'#86929e',fontSize:14}}>Họ và tên</Text>
+                            <Text style={{marginTop: 5,width:"55%",textAlign:'right'}}>{it.idHost.name}</Text>
                         </View>
                         <View style={{flexDirection:'row'}}>
-                        <Text style={{paddingHorizontal:15 , width:120 , marginTop: 5,color:'#86929e',fontSize:14}}>Số điện thoại</Text>
-                            <Text style={{marginTop: 5,width:220,textAlign:'right'}}>{it.idHost.phone}</Text>
+                        <Text style={{paddingHorizontal:15 , width:"40%" , marginTop: 5,color:'#86929e',fontSize:14}}>Số điện thoại</Text>
+                            <Text style={{marginTop: 5,width:"55%",textAlign:'right'}}>{it.idHost.phone}</Text>
                         </View>
 
                         <View style={{flexDirection:'row'}}>
-                        <Text style={{paddingHorizontal:15 , width:120 , marginTop: 5,color:'#86929e',fontSize:14}}>Địa chỉ email</Text>
-                            <Text style={{marginTop: 5,width:220,textAlign:'right'}}>{it.idHost.email}</Text>
+                        <Text style={{paddingHorizontal:15 , width:"40%" , marginTop: 5,color:'#86929e',fontSize:14}}>Địa chỉ email</Text>
+                            <Text style={{marginTop: 5,width:"55%",textAlign:'right'}}>{it.idHost.email}</Text>
                         </View>
                        
                     </View>
                     <View style={{backgroundColor:'#fff' ,height:120,marginTop:10}}>
                         <Text style={{fontWeight:'bold' , fontSize:15, paddingHorizontal:10 , paddingTop:10,textAlign:'left'}}>THÔNG TIN XE</Text>
                         <View style={{flexDirection:'row' ,marginTop:10}}>
-                            <Text style={{paddingHorizontal:15 , width:120 , marginTop: 5,color:'#86929e',fontSize:14}}>Mẫu xe</Text>
-                            <Text style={{marginTop: 5,width:220,textAlign:'right'}}>{it.idCar.carModel} {it.idCar.carName}</Text>
+                            <Text style={{paddingHorizontal:15 , width:"40%" , marginTop: 5,color:'#86929e',fontSize:14}}>Mẫu xe</Text>
+                            <Text style={{marginTop: 5,width:"55%",textAlign:'right'}}>{it.idCar.carModel} {it.idCar.carName}</Text>
                         </View>
                         <View style={{flexDirection:'row'}}>
-                        <Text style={{paddingHorizontal:15 , width:120 , marginTop: 5,color:'#86929e',fontSize:14}}>Năm sản xuất</Text>
-                            <Text style={{marginTop: 5,width:220,textAlign:'right'}}>{it.idCar.year}</Text>
+                        <Text style={{paddingHorizontal:15 , width:"40%" , marginTop: 5,color:'#86929e',fontSize:14}}>Năm sản xuất</Text>
+                            <Text style={{marginTop: 5,width:"55%",textAlign:'right'}}>{it.idCar.year}</Text>
                         </View>
 
                         <View style={{flexDirection:'row'}}>
-                        <Text style={{paddingHorizontal:15 , width:120 , marginTop: 5,color:'#86929e',fontSize:14}}>Số chỗ ngồi</Text>
-                            <Text style={{marginTop: 5,width:220,textAlign:'right'}}>{it.idCar.seats} chỗ</Text>
+                        <Text style={{paddingHorizontal:15 , width:"40%" , marginTop: 5,color:'#86929e',fontSize:14}}>Số chỗ ngồi</Text>
+                            <Text style={{marginTop: 5,width:"55%",textAlign:'right'}}>{it.idCar.seats} chỗ</Text>
                         </View>
                        
                     </View>
@@ -149,37 +149,37 @@ const detailMyTrip = ({navigation,route})=> {
                     </View>
 
                     <View style={{flexDirection:'row'}}>
-                            <Text style={{paddingHorizontal:15 , width:100 , marginTop: 10 ,color:'#86929e' ,fontSize:14}}>Mã chuyến</Text>
-                            <Text style={{marginTop: 10,fontWeight:'bold',textAlign:'right',width:240}}>#{it._id.slice(0,6)}</Text>
+                            <Text style={{paddingHorizontal:15 , width:"40%" , marginTop: 10 ,color:'#86929e' ,fontSize:14}}>Mã chuyến</Text>
+                            <Text style={{marginTop: 10,fontWeight:'bold',textAlign:'right',width:'55%'}}>#{it._id.slice(0,6)}</Text>
                         </View>
                         <View style={{flexDirection:'row'}}>
-                        <Text style={{paddingHorizontal:15 , width:100 , marginTop: 10,color:'#86929e' ,fontSize:14}}>Địa chỉ</Text>
-                            <Text style={{marginTop: 10,width:240,textAlign:'right'}}>{it.locationCheckOut}</Text>
+                        <Text style={{paddingHorizontal:15 , width:'40%', marginTop: 10,color:'#86929e' ,fontSize:14}}>Địa chỉ</Text>
+                            <Text style={{marginTop: 10,width:'55%',textAlign:'right'}}>{it.locationCheckOut}</Text>
 
                         </View>
                         <View style={{flexDirection:'row'}}>
-                        <Text style={{paddingHorizontal:15 , width:100 , marginTop: 10 ,color:'#86929e' ,fontSize:14}}>Giao xe</Text>
+                        <Text style={{paddingHorizontal:15 , width:'40%' , marginTop: 10 ,color:'#86929e' ,fontSize:14}}>Giao xe</Text>
                             
                              {
-                                it.feeExpress != 0 ? <Text  style={{marginTop: 10,textAlign:'right',width:240}}>Có hỗ trợ giao xe</Text> : <Text  style={{marginTop:10,textAlign:'right',width:240}}>Không hỗ trợ</Text>
+                                it.feeExpress != 0 ? <Text  style={{marginTop: 10,textAlign:'right',width:"55%"}}>Có hỗ trợ giao xe</Text> : <Text  style={{marginTop:10,textAlign:'right',width:"55%"}}>Không hỗ trợ</Text>
                              }
                         </View>
                         <View style={{flexDirection:'row'}}>
-                        <Text style={{paddingHorizontal:15 , width:100 , marginTop: 10 ,color:'#86929e' ,fontSize:14}}>Trạng thái</Text>
+                        <Text style={{paddingHorizontal:15 , width:'40%' , marginTop: 10 ,color:'#86929e' ,fontSize:14}}>Trạng thái</Text>
                           
                             {
-                                it.status == 1 ? <Text style={{marginTop: 10,color:'#00a550',textAlign:'right',width:240}}>Đã được xác nhận</Text> : <Text style={{marginTop: 10,color:'red',textAlign:'right',width:240}}>Chưa xác nhận</Text>
+                                it.status == 1 ? <Text style={{marginTop: 10,color:'#00a550',textAlign:'right',width:'55%'}}>Đã được xác nhận</Text> : <Text style={{marginTop: 10,color:'red',textAlign:'right',width:'55%'}}>Chưa xác nhận</Text>
                             }
                         </View>
                         <View style={{justifyContent:'center', alignItems:'center',marginTop:20}}>
                             <View style={{borderWidth:1 , width:"90%" , height: 110,borderRadius:5,borderColor:'#e8eaef',backgroundColor: '#f6f6f6'}}>
                                 <View style={{flexDirection:'row'}}>
-                                    <Text style={{paddingHorizontal:15 , width:100 , marginTop: 10 ,color:'#86929e' ,fontSize:14}}>Trả trước</Text>
-                                    <Text style={{marginTop: 10,textAlign:'right',width:200}}>{(Number(it.price) - Number(it.moneyPaid)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
+                                    <Text style={{paddingHorizontal:15 , width:'40%' , marginTop: 10 ,color:'#86929e' ,fontSize:14}}>Trả trước</Text>
+                                    <Text style={{marginTop: 10,textAlign:'right',width:'55%'}}>{(Number(it.price) - Number(it.moneyPaid)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
                                 </View>
                                 <View style={{flexDirection:'row'}}>
-                                    <Text style={{paddingHorizontal:15 , width:100 , marginTop: 10 ,color:'#86929e' ,fontSize:14}}>Còn lại</Text>
-                                    <Text style={{fontWeight:'bold',marginTop: 10,textAlign:'right',width:200,fontSize:16}}>{(Number(it.moneyPaid)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
+                                    <Text style={{paddingHorizontal:15 , width:'40%' , marginTop: 10 ,color:'#86929e' ,fontSize:14}}>Còn lại</Text>
+                                    <Text style={{fontWeight:'bold',marginTop: 10,textAlign:'right',width:'55%',fontSize:16}}>{(Number(it.moneyPaid)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
                                 </View>
                                 <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#f6f6f6', paddingVertical: 5}}>
                                     <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
@@ -187,12 +187,12 @@ const detailMyTrip = ({navigation,route})=> {
                                 {
                                     it.status == 1 ? 
                                     <View style={{flexDirection:'row'}}>
-                                      <Text style={{paddingHorizontal:15 , width:150,color:'#86929e' ,fontSize:14,marginTop:5}}>Hoàn thành</Text>
+                                      <Text style={{paddingHorizontal:15 , width:'40%',color:'#86929e' ,fontSize:14,marginTop:5}}>Hoàn thành</Text>
 
                                         {
-                                            it.checkCompleted == 1 ? <Text style={{textAlign:'right',width:150,marginTop:5,fontSize:12,color:'#00a550'}}>Giao dịch đã hoàn thành</Text> 
+                                            it.checkCompleted == 1 ? <Text style={{textAlign:'right',width:'55%',marginTop:5,fontSize:12,color:'#00a550'}}>Giao dịch đã hoàn thành</Text> 
                                             :
-                                        <TouchableOpacity style={{borderWidth:1, width:150 , borderRadius:5,borderColor:'#00a550',marginTop:5}} onPress={()=>completed(it._id,1)}>
+                                        <TouchableOpacity style={{borderWidth:1, width:'55%' , borderRadius:5,borderColor:'#00a550',marginTop:5}} onPress={()=>completed(it._id,1)}>
                                             <Text style={{textAlign:'center',fontSize:12,color:'#00a550'}}>Nhấn vào khi đã nhận xe</Text>
                                         </TouchableOpacity>
                                     }

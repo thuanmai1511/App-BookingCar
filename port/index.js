@@ -1,3 +1,3 @@
-const host = "http://192.168.1.4:8080";
+const host = "http://192.168.3.193:8080";
 
-export default host;    
+export default host;        

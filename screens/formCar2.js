@@ -48,59 +48,58 @@ const formCar2 = ({navigation,route}) => {
 
     const getAddress = async ()=> {
         const isCity = [];
-        const getAddressed = await  axios.get("https://thongtindoanhnghiep.co/api/city")
-        getAddressed.data.LtsItem.map((val)=>{
-            // setListCity(prevArray =>[...prevArray ,{id:val.ID,label: val.Title,value: val.Title }])
-
+        const getAddressed = await  axios.get("https://www.thegioididong.com/cart/api/location/GetAllProvinces")
+        getAddressed.data.data.map((val)=>{
+            
             isCity.push({
-                id:val.ID,label: val.Title,value: val.Title
+                id:val.provinceID,label: val.provinceName,value: val.provinceName
             })
         
         })
-        // console.log(getAddressed);
+     
         setListCity(isCity)
     }
 
-    // console.log("sadasdasdsad"+listCity);
+
     const handlerCity = async(val)=>{
-        a = []
+
+        var a = []
+    
         setCity(val)
+       
         const province = listCity.filter(pro =>{
             return pro.value == val
         })
-        if(province.length) {
+        
+        if(province.length){
            
-            const getProvice = await axios.get('https://thongtindoanhnghiep.co/api/city/' + province[0].id + '/district')
-            getProvice.data.map((getp)=>{
-                a = [...a ,{id:getp.ID,label: getp.Title,value: getp.Title }]
-              
-            })
-            setListProvince(a)
-           
-        }
+                const getProvice = await axios.get('https://www.thegioididong.com/cart/api/location/GetDistrictsByProvinceId/'+province[0].id)
+                getProvice.data.data.map((getp)=>{
+                 a = [...a,{id: getp.districtID, label: getp.districtName,value: getp.districtName}]
+                })
+                // console.log(a);
+                setListProvince(a)
 
+        }
+        
     }
 
-    const handlerProvince = async(val)=>{
-        b = []
-        // console.log(val);
-        setProvince(val)
-        // console.log(listProvince);
+    const handlerProvince = async(value)=>{
+
+        var  b = []
+        setProvince(value)
         const ward = listProvince.filter(pro =>{
-            return pro.value == val
-        })
-        // console.log(ward);
-        if(ward.length) {
-           
-            const getWard = await axios.get('https://thongtindoanhnghiep.co/api/district/' +ward[0].id + '/ward')
-            getWard.data.map((item)=>{
-                b = [...b ,{id:item.ID,label: item.Title,value: item.Title }]
-              
+                return pro.value == value
+            })
+            // console.log(ward);
+        if(ward.length){
+            const getWard = await axios.get('https://www.thegioididong.com/cart/api/location/GetWardsByDistrictId/' +ward[0].id)
+            getWard.data.data.map((item)=>{
+                b = [...b ,{id:item.wardID,label: item.wardName,value: item.wardName }]
             })
             setListWard(b)
-            
-           
-        }   
+        }
+    
 
     }
 

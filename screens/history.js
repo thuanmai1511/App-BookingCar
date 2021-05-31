@@ -91,7 +91,7 @@ const historyPage = ({navigation,route})=> {
                                 </View>
                                 <View style={{flexDirection:'column' , justifyContent:'center',alignItems:'center'}}>
                                     <Text style={{width:100,fontWeight:'bold'}}>-{Number(item.price).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
-                                    <TouchableOpacity onPress={()=>navigation.navigate("rate",{data: item.idHost})} style={{borderColor: '#00a550',borderRadius:5,width: 50 , height: 25,borderWidth:1, marginTop: 5,justifyContent:'center',alignItems:'center'}}>
+                                    <TouchableOpacity onPress={()=>navigation.navigate("rate",{data: item.idHost , datas: item.idCar.imagesCar , name: item.idCar.carName, names :item.idCar.carModel })} style={{borderColor: '#00a550',borderRadius:5,width: 50 , height: 25,borderWidth:1, marginTop: 5,justifyContent:'center',alignItems:'center'}}>
                                             <Text style={{fontSize:10,color:'#00a550'}}>Đánh giá</Text>
                                     </TouchableOpacity>
                                    

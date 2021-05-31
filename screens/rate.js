@@ -113,13 +113,13 @@ const rate  = ({navigation,route}) => {
                             <View style={{backgroundColor:'#fff',height:650}}>
                                 <View style={{justifyContent:'center',alignItems:'center',marginTop:10}}>
                                     <Avatar.Image
-                                        source={{uri: host + '/' + route.params.data.images}}
+                                        source={{uri: host + '/' + route.params.datas}}
                                         size={120}
                                         
                                         />   
                             </View>
 
-                            <Text style={{textAlign:'center' ,marginTop:15,fontWeight:'bold',fontSize:16}}>{route.params.data.name}</Text>
+                            <Text style={{textAlign:'center' ,marginTop:15,fontWeight:'bold',fontSize:16}}>{route.params.names} {route.params.name} </Text>
 
                             {
                                 ratingData ? 

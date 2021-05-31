@@ -76,7 +76,7 @@ const detailCar = ({navigation,route})=> {
             // console.log(res.data);
             setDataDetailCar(res.data)
             getDataReview(res.data[0].idUser)
-            relateCar(res.data[0].addresss, res.data[0]._id)
+            relateCar(res.data[0].address, res.data[0]._id)
             setIdHost(res.data[0].idUser)
             numberTrip(res.data[0]._id)
            
@@ -224,7 +224,7 @@ const detailCar = ({navigation,route})=> {
     const relateCar  =  async (ad, i) => {
         // console.log(ad,i);
      await axios.post(`${host}/relatedCar`,{ad: ad}).then(dt=>{
-            // console.log(dt.data[0]._id);
+            // console.log(dt.data);
          const a = dt.data.filter(dl=>(dl._id) != i)
             // console.log(a);
          setDataRelate(a)
@@ -237,9 +237,9 @@ const detailCar = ({navigation,route})=> {
         // console.log(id);
         await axios.get(`${host}/detailCar/`+id).then(async(res)=>{
 
-            const { addresss, _id } = res.data[0]
+            const { address, _id } = res.data[0]
                 setDataDetailCar(res.data)
-                relateCar(addresss, _id)
+                relateCar(address, _id)
             })
         
         refDetail.current?.scrollTo({
@@ -427,7 +427,7 @@ const detailCar = ({navigation,route})=> {
               <View style={{flexDirection:'row'}}>
                 
                 <Ionicons name="calendar-outline" size={20} color="black"  style={{justifyContent:'center',alignContent:'center', marginVertical:10,paddingHorizontal:10}}/>
-                <View style={{flexDirection:'column', justifyContent:'center',alignContent:'center' ,marginLeft:10,width:240}}>
+                <View style={{flexDirection:'column', justifyContent:'center',alignContent:'center' ,marginLeft:10,width:'70%'}}>
                     <Text style={{fontSize:12, width:80}}>{route.params.s ? route.params.s : 'Ngày bắt đầu'}</Text>
                     
                     <Text style={{fontSize:12,marginVertical:2, width:80}}>{route.params.e ? route.params.e : 'Ngày kết thúc'}</Text>
@@ -450,7 +450,7 @@ const detailCar = ({navigation,route})=> {
                 {
                         dataDetailCar.map((r)=>(
                             
-                            <Text key={Math.random()} style={{fontSize:12,width:300}}>{r.addresss}</Text>
+                            <Text key={Math.random()} style={{fontSize:12,width:'100%'}}>{r.addresss}</Text>
                             
                         ))
                     }
@@ -492,21 +492,21 @@ const detailCar = ({navigation,route})=> {
                
                 <View style={{flexDirection:'column', justifyContent:'center',alignContent:'center'}}>
                     <View style={{flexDirection:'row'}}>
-                        <Text style={{fontSize:12,paddingHorizontal:10,width:200}}>Đơn giá thuê</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,width:'60%'}}>Đơn giá thuê</Text>
                         {
                         dataDetailCar.map((t)=>(
                             
-                            <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:150}}>{(Number(t.price)  ).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')} x {route.params.n ? route.params.n : 1 } ngày</Text>
+                            <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right'}}>{(Number(t.price)  ).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')} x {route.params.n ? route.params.n : 1 } ngày</Text>
                         ))
                     }
                        
                     </View>
                    
                     <View style={{flexDirection:'row'}}>
-                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,width:200}}>Phí dịch vụ</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,width:'60%'}}>Phí dịch vụ</Text>
                         {
                             dataDetailCar.map((k)=>(
-                                <Text key ={Math.random()} style={{fontSize:12,paddingHorizontal:10,marginTop:10,opacity:0.5,textAlign:'right',width:150}}>-
+                                <Text key ={Math.random()} style={{fontSize:12,paddingHorizontal:10,marginTop:10,opacity:0.5,textAlign:'right',width:'28%'}}>-
                                { ((Number(k.price)  * Number(route.params.n?route.params.n:'')) * Number(0.1)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}   
                                     
                                 đ</Text>
@@ -515,13 +515,13 @@ const detailCar = ({navigation,route})=> {
                     </View>
 
                     <View style={{flexDirection:'row'}}>
-                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,width:200}}>Giảm giá</Text>
-                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,opacity:0.5,textAlign:'right',width:150}}>-{route.params.data ? Number(route.params.data).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,'): '0.0'}đ</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,width:'60%'}}>Giảm giá</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,opacity:0.5,textAlign:'right',width:'28%'}}>-{route.params.data ? Number(route.params.data).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,'): '0.0'}đ</Text>
                     </View>
 
                     <View style={{flexDirection:'row'}}>
-                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,width:200}}>Phí giao xe</Text>
-                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,opacity:0.5,textAlign:'right',width:150}}> {route.params.km ? (Number(route.params.km) * Number(10000)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,') : '0'}đ</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,width:'60%'}}>Phí giao xe</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,marginTop:10,opacity:0.5,textAlign:'right',width:'28%'}}> {route.params.km ? (Number(route.params.km) * Number(10000)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,') : '0'}đ</Text>
                     </View>
                    
                     
@@ -533,16 +533,16 @@ const detailCar = ({navigation,route})=> {
                         <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 10, borderColor: '#e8eaef'}}></View>
             </View>
             <View style={{flexDirection:'row'}}>
-                        <Text style={{fontSize:12,paddingHorizontal:10,width:200}}>Tổng cộng</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,width:'60%'}}>Tổng cộng</Text>
                         {
                             dataDetailCar.map((l)=>(
-                                <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:150}}>{(((Number(l.price) * Number(route.params.n?route.params.n:'')) - Number(route.params.data ?route.params.data: '') - ((Number(l.price)  * Number(route.params.n?route.params.n:'')) * Number(0.1)))  + (Number(route.params.km ?route.params.km : '' )*Number(10000))).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
+                                <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:'38%'}}>{(((Number(l.price) * Number(route.params.n?route.params.n:'')) - Number(route.params.data ?route.params.data: '') - ((Number(l.price)  * Number(route.params.n?route.params.n:'')) * Number(0.1)))  + (Number(route.params.km ?route.params.km : '' )*Number(10000))).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}đ</Text>
                             ))
                         }
                       
                     </View>
             <View style={{flexDirection:'row'}}>
-                        <Text style={{fontSize:12,paddingHorizontal:10,width:200,marginTop:15,opacity:0.5}}>Mã khuyến mãi</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,width:'60%',marginTop:15,opacity:0.5}}>Mã khuyến mãi</Text>
                         {
                             dataDetailCar.map((o)=>(
                                 <TouchableOpacity key={Math.random()} onPress={()=>navigation.navigate("discount",{city:o.address})}style={{width: 120, textAlign:'right',width:150 }}>
@@ -559,10 +559,10 @@ const detailCar = ({navigation,route})=> {
             </View>
            
             <View style={{flexDirection:'row'}}>
-                        <Text style={{fontSize:12,paddingHorizontal:10,width:200}}>Trả trước</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,width:'60%'}}>Trả trước</Text>
                         {
                             dataDetailCar.map((k)=>(
-                                <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:150}}>
+                                <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:'38%'}}>
                                 {((((Number(k.price) * Number(route.params.n?route.params.n:'')) - Number(route.params.data ?route.params.data: '') - ((Number(k.price)  * Number(route.params.n?route.params.n:'')) * Number(0.1)))  + (Number(route.params.km ?route.params.km : '' )*Number(10000))) * Number(0.3)).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}    
                                     
                                 đ</Text>
@@ -573,10 +573,10 @@ const detailCar = ({navigation,route})=> {
             </View>
             
             <View style={{flexDirection:'row'}}>
-                        <Text style={{fontSize:12,paddingHorizontal:10,width:200,fontWeight:'bold',marginTop:10}}>Còn lại</Text>
+                        <Text style={{fontSize:12,paddingHorizontal:10,width:'60%',fontWeight:'bold',marginTop:10}}>Còn lại</Text>
                         {
                             dataDetailCar.map((k)=>(
-                                <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:150,fontWeight:'bold',marginTop:10}}>
+                                <Text key={Math.random()} style={{fontSize:12,paddingHorizontal:10,textAlign:'right',width:'38%',fontWeight:'bold',marginTop:10}}>
                                 {((((Number(k.price) * Number(route.params.n?route.params.n:'')) - Number(route.params.data ?route.params.data: '') - ((Number(k.price)  * Number(route.params.n?route.params.n:'')) * Number(0.1)))  + (Number(route.params.km ?route.params.km : '' )*Number(10000))) - ((((Number(k.price) * Number(route.params.n?route.params.n:'')) - Number(route.params.data ?route.params.data: '') - ((Number(k.price)  * Number(route.params.n?route.params.n:'')) * Number(0.1)))  + (Number(route.params.km ?route.params.km : '' )*Number(10000))) * Number(0.3))).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}    
                                     
                                 đ</Text>
@@ -729,8 +729,8 @@ const detailCar = ({navigation,route})=> {
           <View style={{marginTop:5,height:200,width:"100%", backgroundColor:'white'}}>
             
               <View style={{flexDirection:'row'}}>
-                <Text style={{fontSize:12,fontWeight:'bold', marginVertical:10,paddingHorizontal:10,width:200}}>ĐÁNH GIÁ </Text>
-                 <Text style={{fontSize:12,paddingHorizontal:10, marginVertical:10,width:150,textAlign:'right'}}>{dataReview.length} nhận xét</Text>
+                <Text style={{fontSize:12,fontWeight:'bold', marginVertical:10,paddingHorizontal:10,width:'60%'}}>ĐÁNH GIÁ </Text>
+                 <Text style={{fontSize:12,paddingHorizontal:10, marginVertical:10,width:'38%',textAlign:'right'}}>{dataReview.length} nhận xét</Text>
               </View>
                         
 
@@ -758,7 +758,7 @@ const detailCar = ({navigation,route})=> {
                                 </View>
                                 <View style={{flexDirection:'column'}}>
                                     <View style={{flexDirection:'row'}}>
-                                        <Text style={{fontSize: 14 , fontWeight:'bold', paddingHorizontal: 5,width:220}}>{dataReview[0]?.idRating?.name}</Text>
+                                        <Text style={{fontSize: 14 , fontWeight:'bold', paddingHorizontal: 5,width:"72%"}}>{dataReview[0]?.idRating?.name}</Text>
                                         <Text style={{fontSize:12 ,textAlign:'right'}}>{dataReview[0]?.date}</Text>
                                     </View>
                                     

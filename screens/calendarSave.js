@@ -175,7 +175,7 @@ const calendarScreen = ({navigation,route})=> {
 
         </View>
 
-            <TouchableOpacity style={{width:"100%",height:50,backgroundColor:'#00a550',marginTop:200}} 
+            <TouchableOpacity style={{width:"100%",height:50,backgroundColor:'#00a550',marginTop:170}} 
                 onPress={save}
             >
                     <Text style={{textAlign:'center',color:'white', paddingTop:15,fontSize:14,fontWeight:'bold'}}>LƯU</Text>   
