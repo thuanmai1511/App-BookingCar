@@ -3,7 +3,7 @@ import {
     View,
     StyleSheet,
     StatusBar,
-    Image,ScrollView,TextInput, Alert, Platform ,TouchableOpacity, LogBox , Dimensions
+    Image,ScrollView,TextInput, Alert, Platform ,TouchableOpacity, LogBox , Dimensions, Linking
 } from 'react-native';
 import {
     Avatar,
@@ -18,6 +18,7 @@ import {
 import { AsyncStorage } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat'
 import { Ionicons } from '@expo/vector-icons'; 
+import { Entypo } from '@expo/vector-icons';
 import io from 'socket.io-client';
 import host from '../port/index';
 import axios from 'axios';
@@ -48,7 +49,7 @@ const Chat = ({navigation,route}) =>{
               room = route.params.idH+"_"+values;
           }
           // const room = values+'_'+route.params.idH;
-          console.log(room);
+          // console.log(room);
           axios.post(`${host}/checkroom`, {room} )
   
           const getMessages = await  axios.post(`${host}/showMessages`, {room})
@@ -83,11 +84,13 @@ const Chat = ({navigation,route}) =>{
     
 
     const onSend = React.useCallback((messages = {}) => {
-        console.log(messages);
+        // console.log(messages);
         setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
         socket.emit('sendMessage', messages);
     }, [])
-  
+    const call = () =>{
+      Linking.openURL(`tel:${route.params.phone}`)
+    }
     React.useEffect( () => {
       acc() , getData()
     } , []);
@@ -105,8 +108,8 @@ const Chat = ({navigation,route}) =>{
                         <Text style={{color: '#fff', fontWeight:'bold',fontSize: 17, textAlign:'center' }}>TRÒ CHUYỆN</Text>    
                     </View> 
                     
-                    <TouchableOpacity>
-                        <Ionicons name="arrow-back" size={24} color="black" style={{opacity: 0}}/>
+                    <TouchableOpacity onPress={call}>
+                      <Entypo name="phone" size={24} color="white" />
                     </TouchableOpacity>
                 
             </View>

@@ -237,14 +237,14 @@ const detailMyCar = ({navigation,route})=> {
                         </View>
                         <View style={{flexDirection:'row'}}>
                         <Text style={{paddingHorizontal:15 , width:"40%" , marginTop: 10,color:'#86929e' ,fontSize:14}}>Địa chỉ</Text>
-                            <Text style={{marginTop: 10,width:"55%",textAlign:'right'}}>{it.locationCheckOut}</Text>
+                            <Text style={{marginTop: 10,width:"55%",textAlign:'right'}}>{it.locationCheckOut? it.locationCheckOut: it.idCar.addresss}</Text>
 
                         </View>
                         <View style={{flexDirection:'row'}}>
                         <Text style={{paddingHorizontal:15 , width:"40%" , marginTop: 10 ,color:'#86929e' ,fontSize:14}}>Giao xe</Text>
                             
                              {
-                                it.feeExpress != 0 ? <Text  style={{marginTop: 10,textAlign:'right',width:"55%"}}>Có hỗ trợ giao xe</Text> : <Text  style={{marginTop:10,textAlign:'right',width:270}}>Không hỗ trợ</Text>
+                                it.feeExpress != 0 ? <Text  style={{marginTop: 10,textAlign:'right',width:"55%"}}>Có hỗ trợ giao xe</Text> : <Text  style={{marginTop:10,textAlign:'right',width:"55%"}}>Không hỗ trợ</Text>
                              }
                         </View>
                         <View style={{flexDirection:'row'}}>

@@ -154,7 +154,7 @@ const detailMyTrip = ({navigation,route})=> {
                         </View>
                         <View style={{flexDirection:'row'}}>
                         <Text style={{paddingHorizontal:15 , width:'40%', marginTop: 10,color:'#86929e' ,fontSize:14}}>Địa chỉ</Text>
-                            <Text style={{marginTop: 10,width:'55%',textAlign:'right'}}>{it.locationCheckOut}</Text>
+                            <Text style={{marginTop: 10,width:'55%',textAlign:'right'}}>{it.locationCheckOut? it.locationCheckOut: it.idCar.addresss}</Text>
 
                         </View>
                         <View style={{flexDirection:'row'}}>

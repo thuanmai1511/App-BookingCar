@@ -19,7 +19,7 @@ import {
 import axios from 'axios';
 import host from '../port/index';
 import { Ionicons } from '@expo/vector-icons';  
-
+import { AsyncStorage } from 'react-native';
 import { Entypo } from '@expo/vector-icons'; 
 
 import imgCar from '../images/imgCar.jpg';
@@ -27,7 +27,7 @@ import imgCar from '../images/imgCar.jpg';
 const myTrip = ({navigation,route})=> {
     // Geocoder.init("AIzaSyBHRMxpBKc25CMHY51h1jrnCCm6PjNs62s");
     const [data , getData] = React.useState([])
-    
+    const [idd , setId] = React.useState([])
 
     const  getDataAPI = async () => {
         const idUser = route.params.id;
@@ -35,13 +35,103 @@ const myTrip = ({navigation,route})=> {
         .then(async(res)=>{
             
             getData(res.data)
-        
+            
         })
        
     
     }
-  
-//    console.log(data);
+    console.log(data);
+    const cancelTrip = async (id,idH) =>{
+        // console.log(idH);
+        Alert.alert(
+            "Bạn đã chắc chắn hủy chuyến",
+            "",
+            [ {
+                text: "Chắc chắn",
+                onPress: () => {
+                    agree()
+                    getIdHost()
+                    notifiIdHost()
+                },
+                style: "cancel"
+              },
+              { text: "Hủy bỏ" , onPress: () => ("Cancel Pressed"),}
+            ]
+          );
+        const agree = async ()=>{
+            await axios.post(`${host}/cancel`,{id:id}).then(dt=>{
+                getDataAPI()
+            })
+        }
+        const getIdHost = async () =>{
+            await axios.post(`${host}/getTokenCancelTrip`, {idH})
+            .then(dt=>{
+
+                for(var i of dt.data.tokenDevices){
+                    sendPushNotification(i.value)
+                }
+            })
+        }
+        const notifiIdHost = async () => {
+            const value = await AsyncStorage.getItem('id');
+            const u = idH
+            var date = new Date().getDate(); //Current Date
+            var month = new Date().getMonth() + 1; //Current Month
+            var year = new Date().getFullYear(); //Current Year
+            var hours = new Date().getHours(); //To get the Current Hours
+            var min = new Date().getMinutes(); //To get the Current Minutes
+            
+            const notifiRes = {
+                idu : value,
+                idh : u,
+                title : "Thông báo hủy xe",
+                text : "Khách đã hủy xe. Xin lỗi vì sự bất tiện này.",
+                dateNoti: date + '/' + month + '/' + year,
+                time : hours + ':' + min
+                
+            } 
+            // console.log(notifiRes);
+    
+             axios.post(`${host}/notificationCancelTrip`,notifiRes).then(()=>{
+               
+            })
+        }
+    }
+    
+    const notiCancel = async () =>{
+        Alert.alert(
+            "Bạn không thể hủy chuyến khi chủ xe đã xác nhận",
+            "",
+            [ {
+                text: "Đồng ý",
+                onPress: () => ("OK Pressed"),
+                style: "cancel"
+              },
+              { text: "Hủy" , onPress: () => ("Cancel Pressed"),}
+            ]
+          );
+        
+        
+    }
+    async function sendPushNotification(expoPushToken) {
+        const message = {
+          to: expoPushToken,
+          sound: 'default',
+          title: 'BookingCar Application',
+          body: 'Khách đã hủy đặt xe.',
+          data: { someData: 'goes here' },
+        };
+      
+        await fetch('https://exp.host/--/api/v2/push/send', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Accept-encoding': 'gzip, deflate',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(message),
+        });
+      }
     React.useEffect(()=>{getDataAPI()},[])
     return(
         
@@ -82,7 +172,7 @@ const myTrip = ({navigation,route})=> {
             <View key={index} style={{width:"100%"}}>
                 
                 
-                    
+                <TouchableOpacity  onPress={()=>navigation.navigate("detailMyTrip", {id: it._id})}>
                 <View style={{justifyContent:'center', alignItems:'center',marginTop:20}}>
                             <View style={{borderWidth:1 , width:"90%" , height: 220,borderRadius:5,borderColor:'#e8eaef',backgroundColor: '#f6f6f6'}}>
 
@@ -98,12 +188,20 @@ const myTrip = ({navigation,route})=> {
                                                 />
                                             </View>
                                             <View style={{justifyContent:'center', alignItems:'center',flexDirection:'row'}}>
-                                                <TouchableOpacity onPress={()=>navigation.navigate("detailMyTrip", {id: it._id})}style={{borderWidth:1 , width:80,height:30,marginLeft:40,justifyContent:'center',alignItems:'center',borderColor:'#00a550',borderRadius:5}}>
-                                                    <Text style={{fontSize:12 , textAlign:'center',color:'#00a550'}}>Xem chi tiết</Text>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity onPress={()=>navigation.navigate("chat",{idH : it.idHost._id ,type: 1})} style={{borderWidth:1 , width:80,height:30,justifyContent:'center',alignItems:'center',borderColor:'#00a550',borderRadius:5,marginLeft:5}}>
+                                                <TouchableOpacity onPress={()=>navigation.navigate("chat",{idH : it.idHost._id ,type: 1 , phone: it.idHost.phone})}style={{borderWidth:1 , width:80,height:30,marginLeft:40,justifyContent:'center',alignItems:'center',borderColor:'#00a550',borderRadius:5}}>
                                                     <Text style={{fontSize:12 , textAlign:'center',color:'#00a550'}}>Nhắn tin</Text>
                                                 </TouchableOpacity>
+                                                {
+                                                    it.status == 1 ? 
+                                                <TouchableOpacity onPress={notiCancel} style={{borderWidth:1 , width:80,height:30,justifyContent:'center',alignItems:'center',borderColor:'red',borderRadius:5,marginLeft:5}}>
+                                                    <Text style={{fontSize:12 , textAlign:'center',color:'red'}}>Hủy chuyến</Text>
+                                                </TouchableOpacity>
+                                                : 
+                                                <TouchableOpacity onPress={()=>cancelTrip(it._id,it.idHost._id)} style={{borderWidth:1 , width:80,height:30,justifyContent:'center',alignItems:'center',borderColor:'red',borderRadius:5,marginLeft:5}}>
+                                                    <Text style={{fontSize:12 , textAlign:'center',color:'red'}}>Hủy chuyến</Text>
+                                                </TouchableOpacity>
+                                                }
+                                                
                                             </View>
                                            
                                         </View>
@@ -143,7 +241,9 @@ const myTrip = ({navigation,route})=> {
                         </View>
                 </View>
                 <View style={{marginTop:20}}></View>
+            </TouchableOpacity>
             </View>
+            
                 ))
             }
         </View>

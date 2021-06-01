@@ -30,7 +30,7 @@ const rate  = ({navigation,route}) => {
         const a = review.find(x => x.idRating == value)
         setRatingData(a)
     }
-
+    console.log(route.params.data);
     useEffect(() => {
         checkReview()
     },[])
@@ -113,13 +113,13 @@ const rate  = ({navigation,route}) => {
                             <View style={{backgroundColor:'#fff',height:650}}>
                                 <View style={{justifyContent:'center',alignItems:'center',marginTop:10}}>
                                     <Avatar.Image
-                                        source={{uri: host + '/' + route.params.datas}}
+                                        source={{uri: host + '/' + route.params.data.imagesCar}}
                                         size={120}
                                         
                                         />   
                             </View>
 
-                            <Text style={{textAlign:'center' ,marginTop:15,fontWeight:'bold',fontSize:16}}>{route.params.names} {route.params.name} </Text>
+                            <Text style={{textAlign:'center' ,marginTop:15,fontWeight:'bold',fontSize:16}}>{route.params.data.carModel} {route.params.data.carName}</Text>
 
                             {
                                 ratingData ? 

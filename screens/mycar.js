@@ -85,7 +85,7 @@ const myCar = ({navigation,route})=> {
 
 
 
-    console.log(data);
+    // console.log(data);
     return(
         
         <View style={{ flex: 1 , backgroundColor: '#efefef'}}>
