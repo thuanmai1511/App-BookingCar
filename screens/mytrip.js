@@ -40,7 +40,7 @@ const myTrip = ({navigation,route})=> {
        
     
     }
-    console.log(data);
+    // console.log(data);
     const cancelTrip = async (id,idH) =>{
         // console.log(idH);
         Alert.alert(

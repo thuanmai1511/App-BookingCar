@@ -34,6 +34,7 @@ const formCar2 = ({navigation,route}) => {
     const [selected2, setSelected2] = React.useState(false)
     const [selected3, setSelected3] = React.useState(false)
     const [selected4, setSelected4] = React.useState(false)
+    const [selected5, setSelected5] = React.useState(false)
     const [fueled , setFueled] = React.useState('')
     const [note , setNote] = React.useState('')
     const [listCity , setListCity] = React.useState([])
@@ -123,6 +124,7 @@ const formCar2 = ({navigation,route}) => {
             gpsAPI : selected2,
             mapAPI : selected3,
             cameraback: selected4,
+            express : selected5,
             noteAPI : note,
             fueledAPI : fueled,
             address: getCity,
@@ -133,7 +135,7 @@ const formCar2 = ({navigation,route}) => {
 
         }
             // console.log(respone2);
-        if( respone2.noteAPI == '' || respone2.fueledAPI == '' || !respone2.location ){
+        if(respone2.address == '' || respone2.express == '' ||respone2.district == '' ||respone2.ward == '' || respone2.noteAPI == '' || respone2.fueledAPI == '' || !respone2.location ){
             Alert.alert("Hãy nhập đầy đủ thông tin")
         }else {
             navigation.navigate("formCar3", {
@@ -415,6 +417,30 @@ const formCar2 = ({navigation,route}) => {
                             <Text style={ selected4 == true ? {  borderWidth: 1,width: 25, borderColor: 'green', borderRadius: 30, height: 25 ,textAlign:'center', fontSize:12,  color:'#fff', paddingTop: 3} :{borderWidth: 1,width: 25, borderRadius: 30, height: 25 ,textAlign:'center', fontSize:12, backgroundColor: "#fff", paddingTop: 3}}>
                                 
                                 { selected4 == true? <Ionicons name="checkmark-outline" size={18} color="green" /> : ''}
+                            </Text>
+                        </TouchableOpacity>
+                       
+                    </View>
+                    
+                    
+                </View>
+                   
+            </View>
+            <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
+                        <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 10, borderColor: '#e8eaef'}}></View>
+            </View>
+            <View style={{backgroundColor: '#fff'}}>
+                <View style={{flexDirection: 'row' }}>
+                    <View style={{marginLeft: 20}}>
+                        <Ionicons name="car-sport-outline" size={25} color="black" />
+                    </View>
+                   
+                    <Text style={{fontSize: 12,fontWeight:'bold', justifyContent: 'center', top: 5, marginLeft: 10, width: 80}}>Giao xe</Text>
+                    <View style={{left: 180 }}>
+                        <TouchableOpacity onPress={()=> setSelected5(!selected5)} >
+                            <Text style={ selected5 == true ? {  borderWidth: 1,width: 25, borderColor: 'green', borderRadius: 30, height: 25 ,textAlign:'center', fontSize:12,  color:'#fff', paddingTop: 3} :{borderWidth: 1,width: 25, borderRadius: 30, height: 25 ,textAlign:'center', fontSize:12, backgroundColor: "#fff", paddingTop: 3}}>
+                                
+                                { selected5 == true? <Ionicons name="checkmark-outline" size={18} color="green" /> : ''}
                             </Text>
                         </TouchableOpacity>
                        

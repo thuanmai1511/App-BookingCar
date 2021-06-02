@@ -33,26 +33,6 @@ const myCar = ({navigation,route})=> {
     const myOrder = async () => {
         await axios.post(`${host}/myOrders`,{id: route.params.id}).then(async(res)=>{
             setData(res.data)
-            // setData([]);
-            // res.data.map(dt=>{
-            //     if(dt.locationCheckOut.length > 0) {
-            //         dt.locationCheckOut.map( async (dtt)=>{
-            //             var a = []
-            //              const {latitude, longitude} =dtt.coords
-            //             //  console.log(latitude , longitude);
-            //             const gg = await Geocoder.from({latitude , longitude});
-                        
-            //             setData(pre => [...pre , {...dt, location : gg.results[0].formatted_address} ])
-            //           });
-            //     }
-            //     else {
-            //         setData(pre => [...pre, dt ])
-                    
-            //     }
-             
-              
-            //   })
-      
             
         })
     }
@@ -81,6 +61,20 @@ const myCar = ({navigation,route})=> {
     const reloadData = () => {
         myOrder()
     }
+    const notiRating = () => { 
+        Alert.alert(
+            "Bạn không thể đánh giá khi chủ xe chưa xác nhận.",
+            "",
+            [ {
+                text: "Đồng ý",
+                onPress: () => ("OK Pressed"),
+                style: "cancel"
+              },
+              { text: "Hủy" , onPress: () => ("Cancel Pressed"),}
+            ]
+          );
+    }
+   
     React.useEffect(()=>{myOrder()},[])
 
 
@@ -119,7 +113,7 @@ const myCar = ({navigation,route})=> {
             <View key={index} style={{width:"100%"}}>
                 
                 
-                    
+                <TouchableOpacity onPress={()=>navigation.navigate("detailMyCar", {id: it._id})} > 
                 <View style={{justifyContent:'center', alignItems:'center',marginTop:20}}>
                             <View style={{borderWidth:1 , width:"90%" , height: 190,borderRadius:5,borderColor:'#e8eaef',backgroundColor: '#f6f6f6'}}>
 
@@ -135,12 +129,20 @@ const myCar = ({navigation,route})=> {
                                     
                                             </View>
                                             <View style={{justifyContent:'center', alignItems:'center',flexDirection:'row'}}>
-                                                <TouchableOpacity onPress={()=>navigation.navigate("detailMyCar", {id: it._id})}style={{borderWidth:1 , width:80,height:30,justifyContent:'center',alignItems:'center',borderColor:'#00a550',borderRadius:5}}>
-                                                    <Text style={{fontSize:12 , textAlign:'center',color:'#00a550'}}>Xem chi tiết</Text>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity onPress={()=>navigation.navigate("chat" , {idH: it.idUserCheckOut._id, type: 0 })} style={{borderWidth:1 , width:80,height:30,justifyContent:'center',alignItems:'center',borderColor:'#00a550',borderRadius:5,marginLeft:5}}>
+                                                <TouchableOpacity onPress={()=>navigation.navigate("chat" , {idH: it.idUserCheckOut._id, type: 0, phone: it.idUserCheckOut.phone })} style={{borderWidth:1 , width:80,height:30,justifyContent:'center',alignItems:'center',borderColor:'#00a550',borderRadius:5}}>
                                                     <Text style={{fontSize:12 , textAlign:'center',color:'#00a550'}}>Nhắn tin</Text>
                                                 </TouchableOpacity>
+                                                {
+                                                    it.status == 1 ?  
+                                                <TouchableOpacity onPress={()=>navigation.navigate("rateCustomer",{review: it.idUserCheckOut, idH : it.idHost})} style={{borderWidth:1 , width:80,height:30,justifyContent:'center',alignItems:'center',borderColor:'#00a550',borderRadius:5,marginLeft:5}}>
+                                                    <Text style={{fontSize:12 , textAlign:'center',color:'#00a550'}}>Đánh giá</Text>
+                                                </TouchableOpacity>
+                                                :  
+                                                <TouchableOpacity onPress={notiRating} style={{borderWidth:1 , width:80,height:30,justifyContent:'center',alignItems:'center',borderColor:'#00a550',borderRadius:5,marginLeft:5}}>
+                                                    <Text style={{fontSize:12 , textAlign:'center',color:'#00a550'}}>Đánh giá</Text>
+                                                </TouchableOpacity>
+                                                }
+                                               
                                             </View>
                                             
                                            
@@ -177,7 +179,8 @@ const myCar = ({navigation,route})=> {
                                 </View>
                             </View>
                         </View>
-                </View>
+                    </View>
+                </TouchableOpacity>
                 <View style={{marginTop:20}}></View>
             </View>
                 ))

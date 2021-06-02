@@ -16,7 +16,7 @@ import host from '../port/index';
 import axios from 'axios';
 import { AsyncStorage } from 'react-native';
 const rate  = ({navigation,route}) => {
-    const { review } = route.params.data
+    const { review } = route.params.review
     const [ defaultRating , setdefaultRating] = useState(1)
     const [maxRating , setmaxRating] =useState([1,2,3,4,5])
     const [ ratingData , setRatingData] = useState({})
@@ -30,7 +30,8 @@ const rate  = ({navigation,route}) => {
         const a = review.find(x => x.idRating == value)
         setRatingData(a)
     }
-    // console.log(route.params.data);
+    // console.log(route.params.review);
+    // console.log(route.params.idH);
     useEffect(() => {
         checkReview()
     },[])
@@ -67,12 +68,12 @@ const rate  = ({navigation,route}) => {
             rating: defaultRating,
             com: valueRating,
             idRating : value,
-            IdHost : route.params.data._id,
+            idCheckout : route.params.review._id,
             dates : date + '/' + month + '/' + year
         }
         
         // console.log(resp);
-        await axios.post(`${host}/ratingAPI`,resp).then(()=>{
+        await axios.post(`${host}/ratingCustomer`,resp).then(()=>{
             Alert.alert(
                 "Cảm ơn bạn đã đánh giá",
                 "",
@@ -108,19 +109,19 @@ const rate  = ({navigation,route}) => {
 
                            
                             <View style={{backgroundColor:'#fff',height:650}}>
-                                <View style={{justifyContent:'center',alignItems:'center',marginTop:10}}>
+                                <View style={{justifyContent:'center',alignItems:'center',marginTop:30}}>
                                     <Avatar.Image
-                                        source={{uri: host + '/' + route.params.data.imagesCar}}
+                                        source={{uri: host + '/' +route.params.review.images}}
                                         size={120}
                                         
                                         />   
                             </View>
 
-                            <Text style={{textAlign:'center' ,marginTop:15,fontWeight:'bold',fontSize:16}}>{route.params.data.carModel} {route.params.data.carName}</Text>
+                            <Text style={{textAlign:'center' ,marginTop:15,fontWeight:'bold',fontSize:16}}>{route.params.review.name}</Text>
 
                             {
                                 ratingData ? 
-                            <View style={{backgroundColor:'#fff',height:200,alignItems:'center'}}>
+                            <View style={{backgroundColor:'#fff',height:200,alignItems:'center',marginTop:30}}>
                                     {
                                         ratingData.rating == 1 ? <View style={{flexDirection:'row',marginLeft:5}}>
                                         <FontAwesome name="star" size={40} color="#ffa500" />
@@ -171,11 +172,11 @@ const rate  = ({navigation,route}) => {
                         </View>
 
                          :
-                            <View style={{ height :400,justifyContent:'center',alignItems:'center'}}>
+                            <View style={{ height :400,justifyContent:'center',alignItems:'center',marginTop:5}}>
                             
                             <CustomRatingBar /> 
                              
-                                    <View style={{marginTop:10,alignItems:'center'}}>
+                                    {/* <View style={{marginTop:10,alignItems:'center'}}>
                                         {  defaultRating == 1 ? <Image source={icon1} style={{height:50,width:50}}/>  : <View></View>
                                         }
                                         {
@@ -190,8 +191,8 @@ const rate  = ({navigation,route}) => {
                                         {
                                             defaultRating == 5 ? <Image source={icon5}  style={{height:50,width:50}}/> :  <View></View>
                                         } 
-                                    </View>
-                                    <View style={{marginTop:5,height:150,borderWidth:1,marginTop:10,borderColor:'#d6d9dc',width:'90%'}}>
+                                    </View> */}
+                                    <View style={{height:150,borderWidth:1,borderColor:'#d6d9dc',width:'100%',marginTop:30}}>
                                         <TextInput
                                             style={{marginLeft:10}}
                                             onChangeText={(value)=>setValueRating(value)}

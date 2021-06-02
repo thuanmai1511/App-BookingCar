@@ -35,6 +35,8 @@ const postCar = ({navigation,route})=> {
     const [modalVisibles, setModalVisibles] = React.useState(false);
     const [dataFilterSeat , setDataFilterSeat] = React.useState([])
     const [dataFilterModel , setDataFilterModel] = React.useState([])
+    const [dataFilterTransmission , setDataFilterTransmission] = React.useState([])
+    const [dataFilterExpress , setDataFilterExpress] = React.useState([])
     const [dataFilter , setDataFilter] = React.useState([])
     const [selected1 , setSelected1] = React.useState(false)
     const [selected2 , setSelected2] = React.useState(false)
@@ -54,19 +56,22 @@ const postCar = ({navigation,route})=> {
         const title = route.params.title;
         
         await axios.get(`${host}/getDetailCar/type=`+title).then((res)=>{
-            // console.log(res.data);
+            setDataCar([]);
             res.data.map(async(val)=>{
-          
+                
                 if(val.status == true && val.idUser != value){
-                    setDataCar(res.data)
+                    
+                    setDataCar(previous=>[...previous, val])
                     setDataFilterSeat(previous=>[...previous, val])
                     setDataFilterModel(previous=>[...previous, val])
                     setDataFilter(previous=>[...previous, val])
+                    setDataFilterTransmission(previous=>[...previous, val])
+                    setDataFilterExpress(previous=>[...previous, val])
                 }else {
     
                 }              
            })
-        // setDataCar(res.data)
+
         })
     }
 
@@ -98,22 +103,25 @@ const postCar = ({navigation,route})=> {
         })
         setDataCar(filterCars)
     }   
-    const search  = async (t) => {
-        // console.log(t);
-       setText(t)
-    
-        let i = t.toLowerCase()
-        // console.log(i);
-        let filterData = dataFilter.filter(dt=>{
-            return dt.carModel.toLowerCase().indexOf(i) != -1
-           
+    const carFilters = (tran) => {
+        // console.log(tran);
+        const filterCars = dataFilterTransmission.filter(dt=>{
+           return dt.transmission == tran
         })
-        
-        setDataCar(filterData)
+        setDataCar(filterCars)
+    }
+    const expressFilter  = async (e) => {
+        const filterCarss = dataFilterExpress.filter(dt=>{
+            return dt.express == e
+         })
+        //  console.log(filterCarss);
+         setDataCar(filterCarss)
 
 
     }
-    
+    const reloadPage = ()=> {
+        getDataCarType()
+    }
     React.useEffect(()=>{getDataCarType()},[])
 
 
@@ -153,15 +161,23 @@ const postCar = ({navigation,route})=> {
                 </View>
                 
             </TouchableOpacity>
+            <TouchableOpacity style={{ height: 25, width: 100, borderRadius:15, marginHorizontal: 10,borderColor:'#fff',borderWidth:1,backgroundColor:'#fff'}} onPress={()=>expressFilter(true)}>
+                <View style={{flexDirection:'row' , alignContent:'center',justifyContent:'center'}}>
+                    <Ionicons name="car-sport-outline" color="black" style={{fontSize: 15,paddingTop: 3,fontWeight:'bold'}}></Ionicons>
+                    <Text style={{textAlign:'center', paddingTop: 3 , fontSize: 12,marginLeft:2,color:'black',fontWeight:'bold'}}>Giao xe</Text>
+                   
+                </View>
+                
+            </TouchableOpacity>
+            <TouchableOpacity onPress={reloadPage} style={{ height: 25, width: 100, borderRadius:15, marginHorizontal: 10,borderColor:'#fff',borderWidth:1,backgroundColor:'#fff'}} >
+                <View style={{flexDirection:'row' , alignContent:'center',justifyContent:'center'}}>
+                    <Ionicons name="car-sport-outline" color="black" style={{fontSize: 15,paddingTop: 3,fontWeight:'bold'}}></Ionicons>
+                    <Text style={{textAlign:'center', paddingTop: 3 , fontSize: 12,marginLeft:2,color:'black',fontWeight:'bold'}}>Tất cả</Text>
+                   
+                </View>
+                
+            </TouchableOpacity>
            
-            <View>
-                <TextInput 
-                    style={{borderWidth:1 , width:200 , borderColor:'white', backgroundColor:'white',fontSize:12, borderRadius:15,height: 25,paddingLeft:10}}
-                    onChangeText={value=>search(value)}
-                    value={text}
-                    placeholder =  " Nhập tìm kiếm ..."
-                />
-            </View>
             
         </View>
 
@@ -190,19 +206,17 @@ shadowRadius: 4.65,
 elevation: 7,}}>
                 <Text  style={{marginTop: 10,marginLeft: 10,fontSize: 15,fontWeight:'bold'}}>{item.carModel} {item.carName}</Text>
                 <View style={{flexDirection:'row'}}>
-                     <Text style={{marginTop: 5,marginLeft: 10}}>5.0 <Ionicons name="star-outline" style={{color:'green', fontSize: 14}}></Ionicons> </Text>
-                     <Text style={{marginTop: 7,marginLeft: 10,fontSize: 12,width:120}}>22 chuyến</Text>
-                     <View style={{flexDirection:'row'}}>
-                        <Text style={{color:'#00a550',fontSize:18,fontWeight:'bold'}}>
-                        {Number(item.price).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}
-                        </Text>
-                        <Text style={{fontSize:12,marginTop:5}}>/ngày</Text>
+                    <View style={{flexDirection:'row',marginTop:7}}>
+                        <Text style={{paddingTop: 2,marginLeft: 10, fontSize: 11,backgroundColor:'#e4e6e8', width: 80 , textAlign:'center',borderRadius:5,height:20}}>{item.transmission}</Text>
+                        <Text style={{paddingTop: 2,marginLeft: 10, fontSize: 11,backgroundColor:'#e4e6e8', width: 80 , textAlign:'center',borderRadius:5,height:20}}>{item.fuel}</Text>
+                        <Text style={{paddingTop: 2,marginLeft: 10, fontSize: 11,backgroundColor:'#e4e6e8', width: 80 , borderRadius:5,height:20,textAlign:'center'}}>{item.express == true ? "Giao xe" : "Không hỗ trợ"}</Text>
                     </View>
-                    
+
                 </View>
-                <View style={{flexDirection:'row',marginTop:7}}>
-                     <Text style={{paddingTop: 2,marginLeft: 10, fontSize: 11,backgroundColor:'#e4e6e8', width: 80 , textAlign:'center',borderRadius:5,height:20}}>{item.transmission}</Text>
-                     <Text style={{paddingTop: 2,marginLeft: 10, fontSize: 11,backgroundColor:'#e4e6e8', width: 80 , textAlign:'center',borderRadius:5,height:20}}>{item.fuel}</Text>
+                <View style={{flexDirection:'row'}}>
+                        <Text style={{marginTop: 10,marginLeft: 10}}><Ionicons name="cash-outline" style={{ fontSize: 14}}></Ionicons></Text>
+                        <Text style={{color:'#00a550',fontSize:18,fontWeight:'bold',textAlign:'left',marginTop:4,marginLeft:5}}>{Number(item.price).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</Text>
+                        <Text style={{fontSize:12,marginTop:10,marginLeft:2}}>/ngày</Text>
                 </View>
                 <View style={{flexDirection:'row'}}>
                     <Text style={{marginTop: 10,marginLeft: 10}}><Ionicons name="location-outline" style={{ fontSize: 14}}></Ionicons></Text>
@@ -245,8 +259,8 @@ elevation: 7,}}>
                 </Pressable>
                
                 <View style={{height: '50%',backgroundColor: '#fff'}}>
-                    <Feather name="minus" size={30} color="black" style={{marginLeft:165}}/>
-                    <Text style={{fontWeight:'bold', textAlign:'center',fontSize:14}}>LOẠI XE</Text>
+                    {/* <Feather name="minus" size={30} color="black" style={{marginLeft:165}}/> */}
+                    <Text style={{fontWeight:'bold', textAlign:'center',fontSize:14,marginTop:10}}>LOẠI XE</Text>
                     <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
                         <TouchableOpacity onPress={() => carFilter(4)}>
                             <View style={{flexDirection:'row', marginTop:20,paddingHorizontal:40}}>
@@ -290,14 +304,48 @@ elevation: 7,}}>
                                 
                             </View>
                     </TouchableOpacity>
+                    
                         
                     
                     </View>
-                   
+                    <View style={{justifyContent:'center', alignItems:'center', backgroundColor: '#fff', paddingVertical: 15 }}>
+                         <View style={{width: "90%",borderBottomWidth: 1 , marginTop: 2, borderColor: '#e8eaef'}}></View>
+                    </View>
+
+                    <View style={{flexDirection:'row',justifyContent:'center', alignItems:'center'}}>
+                        <TouchableOpacity onPress={() => carFilters("Số tự động")}>
+                            <View style={{flexDirection:'row', marginTop:20,paddingHorizontal:40}}>
+                                    <View style={{flexDirection:'column'}}>
+                                        <View style={{borderWidth:1 , width:80,borderRadius:200,height:80,borderColor:'#00a550',justifyContent:'center', alignItems:'center'}}>
+                                            
+                                            <FontAwesome5 name="car-side" size={25} color="#00a550" />
+                                            
+
+                                        </View>
+                                        <Text style={{fontSize:12 ,textAlign:'center', marginTop:5}}>Số tự động</Text>
+                                    </View>
+                                    
+                                </View>
+                        </TouchableOpacity >
+                        <TouchableOpacity onPress={() => carFilters("Số sàn")} >
+                            <View style={{flexDirection:'row', marginTop:20,paddingHorizontal:40}}>
+                                    <View style={{flexDirection:'column'}}>
+                                        <View style={{borderWidth:1 , width:80,borderRadius:200,height:80,borderColor:'#00a550',justifyContent:'center', alignItems:'center'}}>
+                                            
+                                            <FontAwesome5 name="car-side" size={25} color="#00a550" />
+                                            
+
+                                        </View>
+                                        <Text style={{fontSize:12 ,textAlign:'center', marginTop:5}}>Số sàn</Text>
+                                    </View>
+                                    
+                                </View>
+                        </TouchableOpacity>
+                    </View>
                        
-                    <View style={{marginTop:30}}>
+                    <View style={{marginTop:15}}>
                         <TouchableOpacity  onPress={()=>setModalVisibles(true)}>
-                            <View style={{flexDirection:'row',left:240}}>
+                            <View style={{flexDirection:'row',left:260}}>
                                 
                                 <Text style={{fontSize:10,paddingTop:5}}>Lọc theo Hãng xe</Text>
                                 <Octicons name="chevron-right" size={24} color="#cbcbcb" style={{marginLeft:5}}/>

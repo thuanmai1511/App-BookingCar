@@ -74,7 +74,7 @@ const rate2  = ({navigation,route}) => {
                                 </View>
                                 <View style={{flexDirection:'column'}}>
                                     <View style={{flexDirection:'row'}}>
-                                        <Text style={{fontSize: 14 , fontWeight:'bold', paddingHorizontal: 5,width:220}}>{dt?.idRating.name}</Text>
+                                        <Text style={{fontSize: 14 , fontWeight:'bold', paddingHorizontal: 5,width:230}}>{dt?.idRating.name}</Text>
                                         <Text style={{fontSize:12 ,textAlign:'right'}}>{dt.date}</Text>
                                     </View>
                                     

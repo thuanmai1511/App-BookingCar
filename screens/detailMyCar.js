@@ -21,42 +21,25 @@ import host from '../port/index';
 import { Ionicons } from '@expo/vector-icons';  
 import { AsyncStorage } from 'react-native';
 import { Entypo } from '@expo/vector-icons'; 
-
+import { FontAwesome } from '@expo/vector-icons'; 
 import imgCar from '../images/imgCar.jpg';
 
 const detailMyCar = ({navigation,route})=> {
     // Geocoder.init("AIzaSyBHRMxpBKc25CMHY51h1jrnCCm6PjNs62s");
 
     const [data , getData] = React.useState([])
-    
+    const [numberRate , setNumberRating] = React.useState('')
         const myOrders = async () => {
+            showRatingNumber()
             await axios.post(`${host}/myOrderss`,{id: route.params.id}).then(async(res)=>{
                 // console.log(res.data);
                 getData(res.data)
-                // getData([]);
-                // res.data.map(dt=>{
-                //     if(dt.locationCheckOut.length > 0) {
-                //         dt.locationCheckOut.map( async (dtt)=>{
-                //             var a = []
-                //              const {latitude, longitude} =dtt.coords
-                //             //  console.log(latitude , longitude);
-                //             const gg = await Geocoder.from({latitude , longitude});
-                            
-                //             getData(pre => [...pre , {...dt, location : gg.results[0].formatted_address} ])
-                //           });
-                //     }
-                //     else {
-                //         getData(pre => [...pre, dt ])
-                        
-                //     }
-                 
-                  
-                //   })
-          
+               
                 
             })
+          
         }
-
+        
         const confirm = (id,num,idu,idc) => {
             // console.log(id,num);
             const respone = {
@@ -77,7 +60,7 @@ const detailMyCar = ({navigation,route})=> {
                     [
                       { text: "OK", onPress: async () => { 
                           myOrders()
-                    
+                           
                         
                         const value = await AsyncStorage.getItem('id');
                         const u = idu
@@ -120,9 +103,10 @@ const detailMyCar = ({navigation,route})=> {
                     "Duyệt xe không thành công.",
                     "",
                     [
-                      { text: "OK", onPress: () => myOrders() 
+                      { text: "OK", onPress: () => {
+                        myOrders() 
                       
-                    
+                        navigation.goBack() }
                     
                     
                         }
@@ -130,7 +114,29 @@ const detailMyCar = ({navigation,route})=> {
                   );
             })
         }
-    
+        const showRatingNumber = async () =>{
+            var getData = await axios.post(`${host}/myOrderss`,{id: route.params.id})
+            const { data } = getData;
+            var avg = 0
+            var length = 0;
+            data.map(dt=>{
+                dt.idUserCheckOut.review.map(dtt=>{
+                    length++;
+                    if(dtt.rating){
+                        avg += Number(dtt.rating)
+                    }
+                   
+                })
+            
+            })
+            const avgg = Number(avg/length);
+            const condition = avgg - Math.floor(Number(avg/length))
+            // console.log(condition);
+            if(condition >= 0.5)
+                setNumberRating(Math.round(avgg))
+            else  setNumberRating(Math.floor(avgg))
+
+        }
         async function sendPushNotification(expoPushToken) {
             const message = {
               to: expoPushToken,
@@ -154,6 +160,7 @@ const detailMyCar = ({navigation,route})=> {
           const reloadData = () => {
                 myOrders()
           }
+        //   console.log(numberRate);
    React.useEffect(()=>{myOrders()}, [])
 
     return(
@@ -187,7 +194,7 @@ const detailMyCar = ({navigation,route})=> {
             <View key={index} style={{width:"100%"}}>
                     
                 <View style={{}}>
-                    <View style={{backgroundColor:'#fff' ,height:120}}>
+                    <View style={{backgroundColor:'#fff' ,height:150}}>
                         <Text style={{fontWeight:'bold' , fontSize:15, paddingHorizontal:10 , paddingTop:10,textAlign:'left'}}>THÔNG TIN KHÁCH HÀNG</Text>
                         <View style={{flexDirection:'row' ,marginTop:10}}>
                             <Text style={{paddingHorizontal:15 , width:'40%'   , marginTop: 5,color:'#86929e',fontSize:14}}>Họ và tên</Text>
@@ -202,7 +209,59 @@ const detailMyCar = ({navigation,route})=> {
                         <Text style={{paddingHorizontal:15 , width:'40%' , marginTop: 5,color:'#86929e',fontSize:14}}>Địa chỉ email</Text>
                             <Text style={{marginTop: 5,width:'55%',textAlign:'right'}}>{it.idUserCheckOut.email}</Text>
                         </View>
-                       
+                        <View style={{flexDirection:'row'}}>
+                            <Text style={{paddingHorizontal:15 , width:'40%' , marginTop: 5,color:'#86929e',fontSize:14}}>Đánh giá</Text>
+                            {numberRate ? 
+                            
+                            <Text style={{marginTop: 5,width:'55%',textAlign:'right'}}>
+                            
+                            {numberRate == 1?
+                                <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                : "" 
+                            }
+                            {numberRate == 2 ?
+                                <View style={{flexDirection:'row'}}>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    
+                                </View>   
+                                : "" 
+                            }
+                            {numberRate == 3 ?
+                                <View style={{flexDirection:'row'}}>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    
+                                </View>   
+                                : "" 
+                            }
+                            {numberRate == 4 ?
+                                <View style={{flexDirection:'row'}}>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                </View>   
+                                : "" 
+                            }
+                            {numberRate == 5 ?
+                                <View style={{flexDirection:'row'}}>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                </View>   
+                                : "" 
+                            }
+                            
+                           
+                            </Text>
+                            :<Text style={{marginTop: 5,width:'55%',textAlign:'right'}}>Chưa có</Text>
+                        }
+                            
+                        </View>
                     </View>
                     <View style={{backgroundColor:'#fff' ,height:120,marginTop:10}}>
                         <Text style={{fontWeight:'bold' , fontSize:15, paddingHorizontal:10 , paddingTop:10,textAlign:'left'}}>THÔNG TIN XE</Text>

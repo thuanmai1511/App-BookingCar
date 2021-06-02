@@ -42,9 +42,10 @@ const detailCar = ({navigation,route})=> {
     const [dataReview, setDataReview] = React.useState([])
     const [dataRelate, setDataRelate] = React.useState([])
     const [idHost, setIdHost] = React.useState('')
-  
+    const [numberRating, setNumberRating] = React.useState('')
+    const [numberRatingHost, setNumberRatingHost] = React.useState('')
     const [number, setNumber] = React.useState('')
-  
+    // const [dataReviewHost, setDataReviewHost] = React.useState([])
 
     // console.log(route.params.e);
     // console.log(route.params.s);
@@ -73,7 +74,8 @@ const detailCar = ({navigation,route})=> {
 
         await axios.get(`${host}/detailCar/`+idCar)
         .then(async(res)=>{     
-            // console.log(res.data);
+            setDataReviewHost(res.data[0])
+            setDataReviewCar(res.data[0].review)
             setDataDetailCar(res.data)
             getDataReview(res.data[0]._id)
             relateCar(res.data[0].address, res.data[0]._id)
@@ -84,7 +86,7 @@ const detailCar = ({navigation,route})=> {
         selectedHeart() , getName() 
 
     }
-    // console.log(dataDetailCar);
+    
 
     const addFavorite = async (id) => {
         const value = await AsyncStorage.getItem('id');
@@ -295,6 +297,34 @@ const detailCar = ({navigation,route})=> {
 
     }
  
+    const setDataReviewCar = (dt) => {
+        var avg = 0
+        dt.map(dtt=>{
+            avg += dtt.rating
+        })
+        var avgg = Number(avg/dt.length);
+        const condition = avgg - Math.floor(Number(avg/dt.length))
+            // console.log(condition);
+            if(condition >= 0.5)
+                setNumberRating(Math.round(avgg))
+            else  setNumberRating(Math.floor(avgg))
+    }
+    const setDataReviewHost = (dt) => {
+        var avgg = 0
+        var length =0
+        dt.idUser.review.map(dtt=>{
+            length ++;
+            if(dtt.rating){
+                avgg += dtt.rating
+            }
+        })
+        var avggg = Number(avgg/length);
+        const condition = avggg - Math.floor(Number(avgg/length))
+            // console.log(condition);
+            if(condition >= 0.5)
+                setNumberRatingHost(Math.round(avggg))
+            else  setNumberRatingHost(Math.floor(avggg))
+    }
     React.useEffect(  ()=>{
         detailCars() 
     },[])
@@ -339,7 +369,7 @@ const detailCar = ({navigation,route})=> {
                     <View style={{flex: 1 }}>
                         <Text style={{color: '#fff', fontWeight:'bold',fontSize: 17, textAlign:'center' }}>CHI TIẾT XE</Text>    
                     </View> 
-                 {
+                    {
                         dataDetailCar.map((k)=>(
                             
                             <TouchableOpacity key ={Math.random()} onPress={()=>addFavorite(k._id)}>
@@ -377,12 +407,65 @@ const detailCar = ({navigation,route})=> {
                         ))}
                 
                 <View style={{flexDirection:'row'}}>
-                     <Text style={{marginTop: 5,marginLeft: 10}}>5.0 <Ionicons name="star-outline" style={{color:'green', fontSize: 14}}></Ionicons> </Text>
-                     <Text style={{marginTop: 7,marginLeft: 10,fontSize: 12,width:165}}>{number} chuyến</Text>
+                     <Text style={{marginTop: 7,marginLeft: 10}}>
+                         
+                     {numberRating ? 
+                            
+                            <Text style={{width:'60%',textAlign:'right'}}>
+                            
+                            {numberRating == 1?
+                                <FontAwesome name="star" size={15} color="#ffa500" style={{}}/>
+                                : "" 
+                            }
+                            {numberRating == 2 ?
+                                <View style={{flexDirection:'row'}}>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{}}/>
+                                    
+                                </View>   
+                                : "" 
+                            }
+                            {numberRating == 3 ?
+                                <View style={{flexDirection:'row'}}>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{}}/>
+                                    
+                                </View>   
+                                : "" 
+                            }
+                            {numberRating == 4 ?
+                                <View style={{flexDirection:'row'}}>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{}}/>
+                                </View>   
+                                : "" 
+                            }
+                            {numberRating == 5 ?
+                                <View style={{flexDirection:'row'}}>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{}}/>
+                                </View>   
+                                : "" 
+                            }
+                            
+                           
+                            </Text>
+                            :<Text style={{marginTop: 7,width:'60%',textAlign:'right',fontSize: 12}}>Chưa có đánh giá</Text>
+                            
+                        }
+                     
+                     </Text>
+                     <Text style={{marginTop: 7,marginLeft: 15,fontSize: 12,width:"30%"}}>{number} chuyến</Text>
                      <View style={{flexDirection:'row'}}>
                      
                         {dataDetailCar.map((i)=>(
-                            <Text key={Math.random()} style={{color:'#00a550',fontSize:18,fontWeight:'bold'}}>{Number(i.price).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</Text>
+                            <Text key={Math.random()} style={{color:'#00a550',fontSize:18,fontWeight:'bold' }}>{Number(i.price).toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</Text>
                         ))}
                         
               
@@ -469,9 +552,11 @@ const detailCar = ({navigation,route})=> {
             <View style={{paddingHorizontal:20}}> 
             {
                 dataDetailCar.map((p)=>(
-                    <TouchableOpacity key={Math.random()}onPress={()=>navigation.navigate("map", {id :p._id })}>
-                        <Text style={{fontSize:10, color:"#00a550", fontWeight:'bold'}}>Chọn địa điểm giao nhận xe</Text>
-                     </TouchableOpacity>
+                    p.express == true ? 
+                <TouchableOpacity key={Math.random()}onPress={()=>navigation.navigate("map", {id :p._id })}>
+                    <Text style={{fontSize:10, color:"#00a550", fontWeight:'bold'}}>Chọn địa điểm giao nhận xe</Text>
+                </TouchableOpacity>
+                    : <View key={Math.random()}></View>
                 ))
             }
           
@@ -684,9 +769,59 @@ const detailCar = ({navigation,route})=> {
                     
                       
                         <View style={{flexDirection:'row'}}>
-                            <Text style={{paddingTop:5, fontSize:18, marginLeft:10}}>5.0  </Text>    
-                            {/* <Ionicons size={20} color="#00a550" name="star-outline" style={{paddingTop:5}}></Ionicons> */}
-                            <FontAwesome name="star" size={20} color="#ffa500" style={{paddingTop:7}}/>
+                            <Text style={{paddingTop:5, fontSize:18, marginLeft:10}}>
+                            {numberRatingHost ? 
+                            
+                            <Text style={{marginTop: 5,width:'55%',textAlign:'right'}}>
+                            
+                            {numberRatingHost == 1?
+                                <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                : "" 
+                            }
+                            {numberRatingHost == 2 ?
+                                <View style={{flexDirection:'row'}}>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    
+                                </View>   
+                                : "" 
+                            }
+                            {numberRatingHost == 3 ?
+                                <View style={{flexDirection:'row'}}>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    
+                                </View>   
+                                : "" 
+                            }
+                            {numberRatingHost == 4 ?
+                                <View style={{flexDirection:'row'}}>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                </View>   
+                                : "" 
+                            }
+                            {numberRatingHost == 5 ?
+                                <View style={{flexDirection:'row'}}>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                    <FontAwesome name="star" size={15} color="#ffa500" style={{paddingTop:7}}/>
+                                </View>   
+                                : "" 
+                            }
+                            
+                           
+                            </Text>
+                            :<Text style={{paddingTop:5, fontSize:14, marginLeft:10}}>Chưa có đánh giá</Text>
+                        }
+     
+                            </Text>    
+                         
                         </View>
                        
                     </View>
